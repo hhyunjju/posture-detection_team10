@@ -3,7 +3,8 @@ from allauth.account.forms import SignupForm as AllauthSignupForm
 from django import forms
 from .models import Profile
 
-class SignupForm(AllauthSignupForm):
+# 사용자가 가입할 때 추가 정보를 입력할 수 있도록 사용자 정의 가입폼 생성
+class SignupForm(AllauthSignupForm): 
     phone_number = forms.CharField()
     nickname = forms.CharField(required=False)
     email = forms.EmailField()

@@ -48,21 +48,7 @@
 									<table>
 										{{form.as_table}}
 									</table>
-									{% comment %} <div class="form-group">
-									<label for="username"><b>사용자 ID</b></label>
-									<input type="text" placeholder="사용자 ID 입력" name="username" required>
-									</div>
 									<div class="form-group">
-									<p> </p>
-									<label for="password"><b>비밀번호</b></label>
-									<input type="password" placeholder="비밀번호 입력" name="password" required>
-									</div> {% endcomment %}
-									<div class="form-group">
-										{% comment %} <div id="error-message" style="display: none; color: #FF6B6B; background-color: #FFD6D6; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
-											아이디나 비밀번호가 틀렸습니다.
-										</div>
-										<p> </p>
-										<button type="submit" class="login-button">로그인</button> {% endcomment %}
 										<input type="submit" value="로그인">
 										<button type="submit" class="signup-button"><a href="signup.html">회원가입</button>
 										</div>
@@ -75,7 +61,6 @@
 								<form action="{% provider_login_url 'google' %}?next={% url 'home:home' %}" method="post">
 									{% csrf_token %}
 									<button class="social_login_button" style="line-height: 0; padding:0;">
-										{% comment %} <span>Google계정으로 계속</span> {% endcomment %}
 										<img src="{% static 'images/web_neutral_rd_ctn@1x.png' %}">
 									</button>
 								</form>

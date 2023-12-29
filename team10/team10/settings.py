@@ -181,11 +181,17 @@ SOCIALACCOUNT_PROVIDERS = {
             'profile', 
             'email', #저는 email 주소 정보도 받아오고 싶어서 추가해줬습니다
         ],
-        'AUTH_PARAMS': {
-            'access_type': 'online'
-        }
+        'AUTH_PARAMS': {'access_type': 'online'}
     },
-    'naver': {'APP': { ...  }},
+    'naver': {
+        'SCOPE': [
+            'name', 
+            'email', 
+            'nickname', 
+            'phone_number'
+        ],
+        'AUTH_PARAMS': {'access_type': 'online'}
+    },
 }
 SOCIALACCOUNT_AUTO_SIGNUP = False
 ACCOUNT_FORMS = {'signup': 'accounts.forms.SignupForm'}

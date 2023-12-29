@@ -6,9 +6,9 @@ from django.contrib.auth.signals import user_logged_in
 
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    phone_number = models.CharField(max_length=20)
+    phone_number = models.CharField(max_length=20, blank=True)
     nickname = models.CharField(max_length=30, blank = True, default = '')
-    email = models.EmailField()
+    email = models.EmailField(blank=True)
     
     def save(self, *args, **kwargs):
         #닉네임이 비어있으면 사용자의 이름으로 채운다
@@ -36,3 +36,19 @@ def block_duplicate_login(sender, request, user, **kwargs):
  #사용자가 로그인할 때마다 함수 호출되도록 user_logged_in 신호에 함수 연결
  # 다른 창이나 탭에서 동일한 브라우저를 사용하는 경우, 일반적으로 동일한 세션을 공유
 user_logged_in.connect(block_duplicate_login)
+
+from allauth.socialaccount.signals import social_account_updated
+from django.dispatch import receiver
+from .models import Profile
+# 네이버 로그인을 통해 가입할 때 필요한 정보를 Profile 모델에 저장
+@receiver(social_account_updated)
+def save_naver_profile(request, sociallogin, **kwargs):
+    # 네이버 로그인의 경우에만 처리
+    if sociallogin.account.provider == 'naver':
+        user = sociallogin.user
+        data = sociallogin.account.extra_data
+        profile, created = Profile.objects.get_or_create(user=user)
+        profile.nickname = data.get('nickname', '')
+        profile.phone_number = data.get('phone_number', '')
+        profile.email = data.get('email', '')
+        profile.save()
