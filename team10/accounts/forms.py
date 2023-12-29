@@ -1,25 +1,21 @@
 from django.contrib.auth.forms import UserCreationForm
+from allauth.account.forms import SignupForm as AllauthSignupForm
 from django import forms
 from .models import Profile
 
-class SignupForm(UserCreationForm):
+class SignupForm(AllauthSignupForm):
     phone_number = forms.CharField()
-    address = forms.CharField()
     nickname = forms.CharField(required=False)
     email = forms.EmailField()
 
-    class Meta(UserCreationForm.Meta):
-        fields = UserCreationForm.Meta.fields + ('email',) #사용자 생성을 위한 폼에만 필드를 추가
-    
-    def save(self, commit=True):
-        user = super().save(commit=False)
+    def signup(self, request, user):
+        # User 객체가 이미 생성되었고, 여기에 추가 정보를 저장할 수 있습니다.
         user.email = self.cleaned_data['email']
         user.save()
         
         profile = Profile.objects.create(
             user=user,
             phone_number = self.cleaned_data['phone_number'],
-            address = self.cleaned_data['address'],
             nickname = self.cleaned_data['nickname'],
             email=self.cleaned_data['email']
         )

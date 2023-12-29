@@ -184,5 +184,8 @@ SOCIALACCOUNT_PROVIDERS = {
         'AUTH_PARAMS': {
             'access_type': 'online'
         }
-    }
+    },
+    'naver': {'APP': { ...  }},
 }
+SOCIALACCOUNT_AUTO_SIGNUP = False
+ACCOUNT_FORMS = {'signup': 'accounts.forms.SignupForm'}

@@ -7,7 +7,6 @@ from django.contrib.auth.signals import user_logged_in
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     phone_number = models.CharField(max_length=20)
-    address = models.CharField(max_length=50)
     nickname = models.CharField(max_length=30, blank = True, default = '')
     email = models.EmailField()
     
