@@ -1,36 +1,70 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>바른자세 게임</title>
-    <link rel="stylesheet" href="{% static 'assets/css/service.css' %}">
-    <link rel="icon" href="{% static 'assets/images/logo_page.png' %}" type="image/x-icon">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- 추가적인 CSS 스타일 -->
-    <style>
-        .grid-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: 1fr 1fr;
-            gap: 10px;
-            height: 80vh; /* 뷰포트 높이의 80%를 차지하도록 설정 */
-            padding: 10px;
-        }
-        .grid-item {
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .grid-item img {
-            max-width: 100%;
-            max-height: 100%;
-        }
-    </style>
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>바른자세 게임</title>
+        <link rel="stylesheet" href="{% static 'assets/css/service.css' %}">
+        <link rel="icon" href="{% static 'assets/images/logo_page.png' %}" type="image/x-icon">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <!-- 추가적인 CSS 스타일 -->
+        <style>
+            body, html {
+                height: 100%;
+                margin: 0;
+                font-family: Arial, sans-serif;
+            }
+    
+            .grid-container {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: auto 1fr;
+                gap: 1rem;
+                height: calc(100vh - 50px); /* Adjusted for header height */
+                padding: 1rem;
+                box-sizing: border-box;
+            }
+    
+            .header {
+                grid-column: 1 / -1;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0.5rem;
+                background-color: #f8f8f8;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+    
+            .grid-item {
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background-color: #fff;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                padding: 1rem;
+                overflow: hidden;
+            }
+    
+            .grid-item video, .grid-item img {
+                width: 100%;
+                height: auto;
+                border-radius: 8px;
+            }
+    
+            #points-earned, #accuracy {
+                background-color: #f4f4f4;
+                color: #333;
+                font-size: 1.5rem;
+            }
+    
+            #points-earned span, #accuracy span {
+                font-weight: bold;
+            }
+        </style>
+    </head>
 <body class="single is-preload">
 
 <!-- Wrapper -->
@@ -152,3 +186,4 @@
             })();
         </script>
     </body>
+</body>
