@@ -5,9 +5,36 @@
 		<title>바른자세 통계확인</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" type="text/css" href="{% static 'assets/css/main.css' %}">
+		<link rel="stylesheet" type="text/css" href="{% static 'assets/css/service.css' %}">
 		<link rel="icon" href="{%static 'assets/images/logo_page.png' %}" type="image/x-icon" />
 		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+		<style>
+			#popup {
+				display: none;
+				position: fixed;
+				width: 100%;
+				height: 100%;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background-color: rgba(0,0,0,0.5);
+				z-index: 2;
+				cursor: pointer;
+			}
+			#popupContent {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				font-size: 20px;
+				color: white;
+				transform: translate(-50%,-50%);
+				-ms-transform: translate(-50%,-50%);
+			}
+			.button-right {
+				float: right; /* 버튼을 오른쪽으로 이동 */
+			}
+		</style>
 	</head>
 	<body class="single is-preload">
 
@@ -106,10 +133,24 @@
 										<p>그래프와 각종 통계자료로 확인해보세요</p>
 									</div>
 									<div class="meta">
+										<style>
+											.meta {
+											  position: relative; /* position context를 설정합니다. */
+											  width: 100%; /* 필요한 경우 부모 요소의 너비를 지정합니다. */
+											  height: 100%; /* 필요한 경우 부모 요소의 높이를 지정합니다. */
+											}
+										  
+											.meta img {
+											  width: 100%; /* 이미지가 부모 요소의 너비에 맞춰지도록 합니다. */
+											  height: 100%; /* 이미지가 부모 요소의 높이에 맞춰지도록 합니다. */
+											  object-fit: cover; /* 이미지가 비율을 유지하면서 부모 요소를 가득 채우도록 합니다. */
+											}
+										  </style>
 										<time class="published" id="current-time"></time>
 										<a href="https://data.kma.go.kr/cmmn/main.do" class="author">
-										<span class="name"></span>
-										<img src="{% static 'assets/images/turtle_move.gif' %}" alt="반복되는 거북이 애니메이션" /></a>
+										  <span class="name"></span>
+										  <img src="{% static 'assets/images/turtle_move.gif' %}" alt="반복되는 거북이 애니메이션" />
+										</a>
 									</div>
 									<script>
 										// 현재 날짜와 시간을 가져와서 업데이트하는 함수
@@ -179,19 +220,26 @@
 								</section>
 								<footer>
 									<ul class="stats">
-										
-									</ul>
-									<ul class="actions">
-										<!-- 게임화된 통계 페이지로 가는 링크를 추가합니다 -->
-										<li><a href="{% url 'service:game' %}" class="button large">자세 교정 게임하기</a></li>
+										<li><a href="#" onclick="showPopup()">결과 확인하기</a></li>
 									</ul>
 								</footer>
 							</article>
-
+							<!-- Popup -->
+							<div id="popup" onclick="hidePopup()">
+								<div id="popupContent">
+									<!-- 여기에 팝업 내용을 넣어주세요 -->
+									<p>여기에 일일 자세 평가 내용이 표시됩니다.</p>
+								</div>
+							</div>
 					</div>
 
 				<!-- Footer -->
 					<section id="footer">
+						<ul class="actions">
+							<li class="button-right">
+								<a href="{% url 'service:game' %}" class="button large">자세 교정 게임하기</a>
+							</li>
+						</ul>
 						<div class="footer-logo">
 							<img src="{%static 'assets/images/logo_page.png' %}" alt="바른자세 로고" />
 						</div>
@@ -257,5 +305,15 @@
 			<script src="{% static 'assets/js/breakpoints.min.js' %}"></script>
 			<script src="{% static 'assets/js/util.js' %}"></script>
 			<script src="{% static 'assets/js/main.js' %}"></script>
+			<!-- ... 기존 scripts ... -->
+			<script>
+				function showPopup() {
+					document.getElementById("popup").style.display = "block";
+				}
+		
+				function hidePopup() {
+					document.getElementById("popup").style.display = "none";
+				}
+			</script>
 	</body>
 </html>
