@@ -17,6 +17,6 @@ class Profile(models.Model):
         return self.user.name
     
 class CameraImage(models.Model):
-    image = models.ImageField(upload_to='main/media/camera/')
+    image = models.ImageField(upload_to='camera/')
     timestamp = models.DateTimeField(auto_now_add=True)
     

@@ -1,0 +1,159 @@
+<!-- chatbot/chatbot.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chatbot</title>
+    <style>
+        /* static/css/chatbot.css */
+        #chat-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%; /* 필요에 따라 조정 */
+            margin: auto;
+            border: 1px solid #ccc;
+        }
+
+        #chat-box {
+            height: 445px; /* 필요에 따라 조정 */
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+
+        #input-area {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        #input-roundbox {
+            width: 100%; /* 버튼을 포함한 전체 너비를 사용 */
+            padding: 10px 20px;
+            padding-right: 60px; /* 버튼 영역 만큼 패딩을 추가 */
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            margin: 6px 5px;
+        }
+        #user-input {
+            width: 90%;
+        }
+
+        #send-button {
+            padding: 10px 20px;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+            background-color: #eceff1;
+            position: absolute; /* 절대 위치 사용 */
+            right: 5px; /* 우측에 위치 */
+            top: 50%; /* 상위 요소의 중앙에 위치 */
+            transform: translateY(-50%); /* 버튼을 상위 요소의 중앙에 정확히 위치시킴 */
+            cursor: pointer; /* 클릭 가능함을 나타내는 커서 스타일 */
+        }
+        .chat-bubble {
+            padding: 10px 20px;
+            border-radius: 20px;
+            margin: 10px;
+            display: inline-block;
+            max-width: 80%;
+            font-size: 0.8em; /* 글씨 크기 조정 */
+        }
+        
+        .ai-message {
+            background-color: #eceff1; /* 연한 회색 배경 */
+            align-self: flex-start;
+            margin-left: 10px;
+        }
+        
+        .user-message {
+            background-color: #9DC5BE; /* 연한 분홍색 배경 */
+            align-self: flex-end;
+            margin-right: 10px;
+            text-align: right;
+        }
+        
+        /* 채팅 메시지 컨테이너를 위한 추가 스타일 */
+        .chat-message {
+            display: flex;
+            justify-content: flex-end; /* user 메시지를 오른쪽 정렬 */
+        }
+    
+        .chat-message.ai {
+            justify-content: flex-start; /* ai 메시지를 왼쪽 정렬 */
+        }
+
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <div id="chat-box"></div>
+        <div id="input-area" style="display: flex; position: relative; align-items: center;">
+            <div id="input-roundbox">
+                <input type="text" id="user-input" placeholder="메시지를 입력하세요...">
+                <button id="send-button" onclick="sendMessage()">전송</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function sendMessage() {
+            var userInput = document.getElementById('user-input').value;
+            document.getElementById('user-input').value = ''; // 입력창을 비웁니다.
+            var chatBox = document.getElementById('chat-box');
+
+            // 사용자 메시지를 위한 chat-bubble 생성
+            var userBubble = document.createElement('div');
+            userBubble.className = 'chat-bubble user-message';
+            userBubble.innerText = userInput;
+
+            var userMessageDiv = document.createElement('div');
+            userMessageDiv.className = 'chat-message';
+            userMessageDiv.appendChild(userBubble);
+            chatBox.appendChild(userMessageDiv);
+    
+            // AJAX 요청을 통해 서버에 메시지 전송
+            fetch('/chatbot/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({ message: userInput })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // AI 메시지를 위한 chat-bubble 생성
+                var aiBubble = document.createElement('div');
+                aiBubble.className = 'chat-bubble ai-message';
+                aiBubble.innerText = '챗봇: ' + data.response;
+
+                var aiMessageDiv = document.createElement('div');
+                aiMessageDiv.className = 'chat-message ai';
+                aiMessageDiv.appendChild(aiBubble);
+                chatBox.appendChild(aiMessageDiv);
+
+                // 새 메시지가 추가될 때마다 채팅 박스를 스크롤하여 가장 최근 메시지가 보이도록 합니다.
+                chatBox.scrollTop = chatBox.scrollHeight;
+            });
+        }
+    
+        // CSRF 토큰 가져오기 (장고와 AJAX 요청을 위해 필요)
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+    
+</body>
+</html>
+

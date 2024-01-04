@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "brd",
     "home",
     "service",
+    "chatbot",
     'django.contrib.sites', #추가
     'allauth',
     'allauth.account',
@@ -59,7 +60,7 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    # "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "accounts.middleware.BlockedMiddleware",
     "allauth.account.middleware.AccountMiddleware",
 ]
@@ -141,7 +142,6 @@ STATICFILES_DIRS = [
 ]
 # BASE_DIR : ../team10/
 # STATIC_ROOT : ../team10/static/
-
 # STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 
@@ -186,3 +186,11 @@ SOCIALACCOUNT_PROVIDERS = {
         }
     }
 }
+
+
+# 허용 파일 형식
+ALLOWED_FILE_TYPES = [
+    'image/jpeg',
+    'image/png',
+    'image/gif',
+]

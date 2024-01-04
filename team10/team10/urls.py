@@ -28,6 +28,7 @@ urlpatterns = [
     path('brd/', include('brd.urls')),
     path('service/', include('service.urls')),
     path('accounts/', include('allauth.urls')),
+    path('chatbot/', include('chatbot.urls')),
 ]
 
 if settings.DEBUG:

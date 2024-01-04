@@ -7,6 +7,13 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 		<link rel="stylesheet" href="{% static 'assets/css/service.css' %}" />
 		<link rel="icon" href="{% static 'assets/images/logo_page.png' %}" type="image/x-icon" />
+		<script
+		src="https://code.jquery.com/jquery-3.7.1.js"
+		integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+		crossorigin="anonymous"></script>
+		<script src='{% static "assets/js/cookie_csrf.js" %}'></script>
+		<script src='{% static "assets/js/capture.js" %}'></script>
+		
 	</head>
 	<body class="single is-preload">
 
@@ -144,134 +151,20 @@
 								</header>
 								<br>
 								<div class="video-container">
-									<video id='video' controls autoplay muted playsinline style="max-width: 100%; max-height: 600px;"></video>
+									<video id='video' style="max-width: 100%; height: auto;"></video>
+									<br>
 									<div class="video-controls">
-										<button id="startRecording">녹화 시작</button>
-										<button id="stopRecording" disabled>녹화 중지</button>
+										<button id="startbutton">스트리밍 시작</button>
+										<button id="stopbutton">스트리밍 종료</button>
+									</div>
+									<canvas id="canvas" visibility: hidden>
+									</canvas>
+									<div class="output">
+									  <img id="photo" visibility: hidden>
 									</div>
 								</div>
 								<p>당신의 바른 자세를 녹화하여 통계자료로 제공합니다.</p>
-								<span class="image featured" style="display: flex; justify-content: center; align-items: center; height: 600px;">
-									<video id='video' style="max-width: 100%; height: auto;" autoplay muted playsinline></video>
-								</span>								
-								<script>
-									let mediaRecorder;
-									let recordedBlobs;
-									const canvas = document.createElement('canvas');
-									const context = canvas.getContext('2d');
-									const video = document.getElementById('video');
-									const startButton = document.getElementById('startRecording');
-									const stopButton = document.getElementById('stopRecording');
-									
-									const constraints = {
-										video: {
-											frameRate: {
-												ideal: 10, max: 15
-											},
-										}
-									};
-		
-									navigator.mediaDevices
-										.getUserMedia(constraints)
-										.then((mediaStream) => {
-											video.srcObject = mediaStream;
-										})
-										.catch((err) => {
-											console.error(`${err.name}: ${err.message}`);
-										});
-		
-									function captureImage(){
-										canvas.width = video.videoWidth;
-										canvas.height = video.videoHeight;
-										context.drawImage(video, 0, 0);
-										canvas.toBlob(blob => {
-											const formData = new FormData();
-											formData.append('camera-image', blob);
-											fetch('/test/', {
-												method: 'POST',
-												body : formData
-											});
-										});
-									}
-									startButton.addEventListener('click', () => {
-										startRecording();
-									});
-
-									stopButton.addEventListener('click', () => {
-										stopRecording();
-									});
-
-									function startRecording() {
-										recordedBlobs = [];
-										let options = { mimeType: 'video/webm;codecs=vp9' };
-										if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-											console.error(`${options.mimeType} is not supported`);
-											options = { mimeType: 'video/webm;codecs=vp8' };
-											if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-												console.error(`${options.mimeType} is not supported`);
-												options = { mimeType: 'video/webm' };
-											}
-										}
-
-										try {
-											mediaRecorder = new MediaRecorder(window.stream, options);
-										} catch (e) {
-											console.error('Exception while creating MediaRecorder:', e);
-											return;
-										}
-
-										startButton.disabled = true;
-										stopButton.disabled = false;
-
-										mediaRecorder.onstop = (event) => {
-											console.log('Recorder stopped: ', event);
-										};
-
-										mediaRecorder.ondataavailable = (event) => {
-											if (event.data && event.data.size > 0) {
-												recordedBlobs.push(event.data);
-											}
-										};
-
-										mediaRecorder.start();
-										console.log('MediaRecorder started', mediaRecorder);
-									}
-
-									function stopRecording() {
-										mediaRecorder.stop();
-										startButton.disabled = false;
-										stopButton.disabled = true;
-
-										const blob = new Blob(recordedBlobs, { type: 'video/webm' });
-										const url = window.URL.createObjectURL(blob);
-										const a = document.createElement('a');
-										a.style.display = 'none';
-										a.href = url;
-										a.download = 'recorded_video.webm';
-										document.body.appendChild(a);
-										a.click();
-										setTimeout(() => {
-											document.body.removeChild(a);
-											window.URL.revokeObjectURL(url);
-										}, 100);
-									}
-
-									navigator.mediaDevices.getUserMedia({ audio: true, video: true })
-										.then(stream => {
-											window.stream = stream;
-											video.srcObject = stream;
-										})
-										.catch(e => {
-											console.error('getUserMedia() error:', e);
-										});
-								</script>
-								<div>
-									<video id='video' style="max-width: 100%; height: auto;" autoplay muted playsinline></video>
-									<br>
-									<button onclick="captureImage()">캡쳐</button>
-								</div>
-								<p>문구1</p>
-								<p>문구2</p>
+						
 							</article>
 					</div>
 
