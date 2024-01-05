@@ -148,3 +148,30 @@ def send_image(request):
         # return FileResponse(open(processed_image_path, 'rb'), content_type='image/png')
                 context = {'class_name':str(class_name)}
         return JsonResponse(context)
+
+#---------------웹 푸시----------------------------
+from pyfcm import FCMNotification
+from dotenv import load_dotenv
+load_dotenv()  # .env 파일 로드
+FCM_SERVER_KEY = os.getenv('FCM_SERVER_KEY')
+
+#  FCM 서버에 푸시 알림을 전송
+# 사용자의 FCM 토큰(user_token), 알림 제목(title), 메시지(message)를 인자로 받는다
+def send_push_notification(user_token, title, message):
+    push_service = FCMNotification(api_key=FCM_SERVER_KEY)
+    result = push_service.notify_single_device(registration_id=user_token, message_title=title, message_body=message)
+    return result
+
+# signals.py
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from .models import PostureDetection
+from .views import send_push_notification
+
+@receiver(post_save, sender=PostureDetection)
+def model_post_save_receiver(sender, instance, **kwargs):
+    user_profile = instance.user.profile  # User와 연결된 Profile 인스턴스를 가져옵니다.
+    user_token = user_profile.fcm_token   # Profile에서 fcm_token을 가져옵니다.
+    if user_token:
+        send_push_notification(user_token, '알림 제목', '알림 내용')
+    

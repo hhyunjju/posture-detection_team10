@@ -39,3 +39,14 @@ def block_duplicate_login(sender, request, user, **kwargs):
  # 다른 창이나 탭에서 동일한 브라우저를 사용하는 경우, 일반적으로 동일한 세션을 공유
 user_logged_in.connect(block_duplicate_login)
 # -----------------------(중복 로그인 방지 기능)--------------------
+#--------------user_signed_up 신호를 사용하여 Profile모델 자동 업데이트하는 방법---------------------
+from allauth.account.signals import user_signed_up
+from django.dispatch import receiver
+
+@receiver(user_signed_up)
+def create_social_profile(request, user, **kwargs):
+    Profile.objects.get_or_create(
+        user=user,
+        defaults={'email': user.email}  # 기본값 설정
+    )
+
