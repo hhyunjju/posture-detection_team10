@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>바른자세 게임</title>
+    <title>바른자세 스트레칭</title>
     <link rel="stylesheet" href="{% static 'assets/css/main.css' %}">
     <link rel="icon" href="{% static 'assets/images/logo_page.png' %}" type="image/x-icon">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -31,6 +31,11 @@
         }
     </style>
 </head>
+<script
+		src="https://code.jquery.com/jquery-3.7.1.js"
+		integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+		crossorigin="anonymous"></script>
+		<script src='{% static "assets/js/cookie_csrf.js" %}'></script>
 <body class="single is-preload">
     <div id="posture-status-message"></div>
     <!-- Wrapper -->
@@ -167,9 +172,11 @@
             <div class="grid-item" id="webcam">
                 <!-- 웹캠 출력을 위한 HTML 요소 -->
                 <div class="video-container">
-                    <video id='video' autoplay muted playsinline style="max-width: 95%; height: auto; left:11px; top:4px; position: relative;"></video>
+                    <video id='video' poster="{% static 'assets/images/game_loading_swch.png' %}" style="max-width: 95%; height: auto; left:11px; top:4px; position: relative;"></video>
                     <div id='posture-status' style="color: lime; position: relative; left:10px; top: -70px;"></div>
-
+                    <br>
+                    <div id='count'></div>
+                    <div id='subscription'></div>
                     <canvas id="canvas" visibility: hidden>
                     </canvas>
                     <div class="output">
@@ -186,9 +193,104 @@
                 <p>정확도: <span id="accuracy-percentage">0%</span></p>
             </div>
         </div>
-        
+        <script>
+            (function() {
+                const video = document.getElementById('webcamVideo');
+    
+                if (navigator.mediaDevices.getUserMedia) {
+                    navigator.mediaDevices.getUserMedia({ video: true })
+                    .then(function (stream) {
+                        video.srcObject = stream;
+                    })
+                    .catch(function (error) {
+                        console.log("웹캠에 접근할 수 없습니다.");
+                    });
+                }
+            })();
+            // 이미지 경로 목록입니다. 실제 이미지 경로로 교체해주세요.
+            const imageList = [
+                '{% static "assets/images/Stretching/1.gif" %}',
+                '{% static "assets/images/Stretching/2.gif" %}',
+                '{% static "assets/images/Stretching/3.gif" %}',
+                '{% static "assets/images/Stretching/4.gif" %}',
+                '{% static "assets/images/Stretching/5.gif" %}',
+                '{% static "assets/images/Stretching/6.gif" %}',
+                '{% static "assets/images/Stretching/7.gif" %}',
+            ];
+            let currentIndex = 0; // 현재 이미지 인덱스
+
+            const statusMessageElement = document.getElementById('posture-status-message');
+
+            // 'clear' 신호에 대한 처리 함수
+            function handleClear() {
+                currentIndex++;
+                if (currentIndex >= imageList.length) {
+                    currentIndex = 0; // 이미지 리스트의 끝에 도달했다면 처음으로 돌아갑니다.
+                }
+                updateImage();
+                displayStatusMessage("Clear!");
+            }
+
+            // 'fail' 신호에 대한 처리 함수
+            function handleFail() {
+                // 현재 인덱스에 있는 이미지를 다시 띄우지만, 리스트의 인덱스는 증가시키지 않습니다.
+                updateImage();
+                displayStatusMessage("Fail!");
+            }
+
+            // 이미지를 갱신하는 함수
+            function updateImage() {
+                const imgElement = document.getElementById('posture-image');
+                imgElement.src = imageList[currentIndex];
+            }
+
+            // 상태 메시지를 표시하는 함수
+            function displayStatusMessage(message) {
+                statusMessageElement.textContent = message;
+                statusMessageElement.style.display = 'block';
+
+                // 메시지를 몇 초간 보여준 후 숨깁니다.
+                setTimeout(() => {
+                    statusMessageElement.style.display = 'none';
+                }, 3000); // 3초 후에 메시지를 숨깁니다.
+            }
+
+            // 모델에서 'Clear!' 신호를 받으면 호출되는 함수
+            function onModelClearSignal() {
+                // 다음 이미지로 넘어갑니다.
+                currentIndex = (currentIndex + 1) % imageList.length;
+                updateImage();
+                displayStatusMessage("잘했습니다! 다음 동작을 해보세요!");
+            }
+
+            // 모델에서 'Fail!' 신호를 받으면 호출되는 함수
+            function onModelFailSignal() {
+                // 현재 이미지를 다시 로드합니다.
+                updateImage();
+                displayStatusMessage("다시 해보세요!");
+            }
+
+            // 모델에서 신호를 받는 가상의 함수입니다.
+            // 실제 모델에서 신호를 받는 로직으로 교체해야 합니다.
+            function receiveSignalFromModel(signal) {
+                if (signal === 'Clear!') {
+                    onModelClearSignal();
+                } else if (signal === 'Fail!') {
+                    onModelFailSignal();
+                }
+            }
+
+            // 페이지 로드 시 랜덤 이미지 표시 함수를 호출합니다.
+            window.addEventListener('DOMContentLoaded', () => {
+                // 첫 번째 이미지를 랜덤하게 설정합니다.
+                currentIndex = Math.floor(Math.random() * imageList.length);
+                updateImage();
+            });
+
+        </script>
 
         <script src='{% static "assets/js/capture_game.js" %}'></script>
         <!-- 웹캠 스트림을 가져오기 위한 JavaScript -->
 
     </body>
+</body>   

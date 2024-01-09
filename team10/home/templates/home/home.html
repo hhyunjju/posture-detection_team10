@@ -248,46 +248,47 @@
 							</article>
 
 						<!-- Post -->
-							<article class="post">
-								<header>
-									<div class="title">
-										<h2><a href="{% url 'service:model' %}">저희의 모델의 성능을 시각적으로 확인해보세요</a></h2>
-										<p>저희 거북목 탐지 모델의 성능은~</p>
-									</div>
-									<div class="meta">
-										<time class="published" id="current-time"></time>
-										<a href="https://data.kma.go.kr/cmmn/main.do" class="author"><span class="name">현재 날씨</span><img src="{%static 'assets/images/avatar.jpg' %}" alt="" /></a>
-									</div>
-									<script>
-										// 현재 날짜와 시간을 가져와서 업데이트하는 함수
-										function updateTime() {
-										  var now = new Date();
-										  var months = ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"];
-										  var formattedDate = months[now.getMonth()] + " " + now.getDate() + ", " + now.getFullYear();
-										
-										  // HTML의 time 요소를 찾아서 현재 날짜와 시간으로 설정
-										  document.getElementById('current-time').textContent = formattedDate;
-										}
-										
-										// 웹 페이지가 로드될 때 함수를 실행
-										window.onload = function() {
-										  updateTime();
-										};
-									</script>
-								</header>
-								<a href="{% url 'service:model' %}" class="image featured"><img src="{%static 'assets/images/model.png' %}" alt="" /></a>
-								<footer>
-									<ul class="actions">
-										<li><a href="{% url 'service:model' %}" class="button large">이동하기</a></li>
-									</ul>
-								</footer>
-							</article>
+						<article class="post">
+							<header>
+								<div class="title">
+									<h2><a href="{% url 'service:statistics' %}">통계 페이지로 이동</a></h2>
+									<p>나의 통계를 확인해보세요</p>
+								</div>
+								<div class="meta">
+									<time class="published" id="current-time"></time>
+									<a href="https://data.kma.go.kr/cmmn/main.do" class="author"><span class="name">현재 날씨</span><img src="{%static 'assets/images/avatar.jpg' %}" alt="" /></a>
+								</div>
+								<script>
+									// 현재 날짜와 시간을 가져와서 업데이트하는 함수
+									function updateTime() {
+									  var now = new Date();
+									  var months = ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"];
+									  var formattedDate = months[now.getMonth()] + " " + now.getDate() + ", " + now.getFullYear();
+									
+									  // HTML의 time 요소를 찾아서 현재 날짜와 시간으로 설정
+									  document.getElementById('current-time').textContent = formattedDate;
+									}
+									
+									// 웹 페이지가 로드될 때 함수를 실행
+									window.onload = function() {
+									  updateTime();
+									};
+								</script>
+							</header>
+							<a href="{% url 'service:statistics' %}" class="image featured"><img src="{%static 'assets/images/statistics.png' %}" alt="" /></a>
+							<p>당신의 일일 자세가 어떤지 시각적으로 확인해보세요.</p>
+							<footer>
+								<ul class="actions">
+									<li><a href="{% url 'service:statistics' %}" class="button large">이동하기</a></li>
+								</ul>
+							</footer>
+						</article>
 						<!-- Post -->
 							<article class="post">
 								<header>
 									<div class="title">
-										<h2><a href="{% url 'service:statistics' %}">통계 페이지로 이동</a></h2>
-										<p>나의 통계를 확인해보세요</p>
+										<h2><a href="{% url 'service:game' %}">스트레칭 페이지로 이동</a></h2>
+										<p>하루동안의 피로를 스트레칭으로 풀어보세요</p>
 									</div>
 									<div class="meta">
 										<time class="published" id="current-time"></time>
@@ -310,11 +311,11 @@
 										};
 									</script>
 								</header>
-								<a href="{% url 'service:statistics' %}" class="image featured"><img src="{%static 'assets/images/statistics.png' %}" alt="" /></a>
-								<p>당신의 일일 자세가 어떤지 시각적으로 확인해보세요.</p>
+								<a href="{% url 'service:game' %}" class="image featured"><img src="{%static 'assets/images/game.png' %}" alt="" /></a>
+								<p>다양한 자세로 몸의 피로를 풀고 돌아가세요.</p>
 								<footer>
 									<ul class="actions">
-										<li><a href="{% url 'service:statistics' %}" class="button large">이동하기</a></li>
+										<li><a href="{% url 'service:game' %}" class="button large">이동하기</a></li>
 									</ul>
 								</footer>
 							</article>

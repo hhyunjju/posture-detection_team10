@@ -72,7 +72,11 @@
           }
         }, false);
     
-        startVideo();
+        // startVideo();
+
+        gameOneSet();
+
+        
 
         clearphoto();
     }
@@ -89,7 +93,7 @@
     function startVideo() {
       video.play();
       streamingStatus = true;
-      sendImg = setInterval(sendImage, 3000);
+      // sendImg = setInterval(sendImage, 3000);
     }
 
 
@@ -112,7 +116,7 @@
     // drawing that to the screen, we can change its size and/or apply
     // other changes before drawing it.
 
-    function isBadPosture(num){
+    function isBadPosture(num){ // #################################### 수정 필요
       if (num==0) {
         return 'Good Posture';
       } else {
@@ -166,6 +170,80 @@
       }, 'image/png');
       console.log(streaming);
     }
+
+// ######################################################## Timer
+    function TIMER(time, min, sec){
+      PLAYTIME=setInterval(function(){
+            time=time-1000; //1초씩 줄어듦
+            min=time/(60*1000); //초를 분으로 나눠준다.
+    
+           if(sec>0){ //sec=60 에서 1씩 빼서 출력해준다.
+                sec=sec-1;
+                jQuery("#count").html(sec);
+               
+            }
+            if(sec===0){
+               // 0에서 -1을 하면 -59가 출력된다.
+                // 그래서 0이 되면 바로 sec을 60으로 돌려주고 value에는 0을 출력하도록 해준다.
+                sec=60;
+                jQuery("#count").html('0');
+            }    
+            if($('#count').html()=='0'){
+              jQuery("#count").html('시간 종료');
+            } 
+            
+       
+        },1000); //1초마다 
+    }
+
+    function myTimer(sen, time, m, s) {
+      return new Promise(resolve => {
+        jQuery("#count").html(s);
+        jQuery("#subscription").html(sen);
+        TIMER(time,m,s);
+        var sendimg = setInterval(sendImage, 1000);
+        setTimeout(() => {
+          clearInterval(sendimg);
+          clearInterval(PLAYTIME);
+          resolve();
+      }, time);
+      });
+    }
+
+    function mySendImage(){
+      return new Promise(resolve => {
+        sendImage();
+        resolve();
+      });
+    }
+
+    function myStartVideo(){
+      return new Promise(resolve => {
+        setTimeout(() => {
+          startVideo();
+          resolve();
+      }, 700);
+        // startVideo();
+        // resolve();
+      });
+    }
+
+    function gameOneSet(){
+      myTimer('5초 뒤에 스트레칭이 시작됩니다.', 5000, 0, 5)
+        .then(() => {
+          return myStartVideo();
+        })
+        .then(() => {
+          return myTimer('왼쪽의 동작을 10초 안에 따라해주세요.', 10000, 0, 10);
+        })
+        .then(() => {
+          return console.log('끝끝');
+        })
+    }
+
+
+    
+
 
 // var imageSrc = $("#previewImage").attr("src");
   

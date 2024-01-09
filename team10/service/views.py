@@ -16,6 +16,9 @@ from .preprocessing import calculate_angle, calculate_distance, selected_landmar
 import os
 import time
 
+from django.contrib.auth.decorators import login_required
+
+
 model_path = os.path.join(os.getcwd(), 'service\pose_classification_model.pkl')
 pose_model = joblib.load(model_path) # 여기 삭제하고 특정 이벤트 발생시 모델을 로드하도록.
 
@@ -67,7 +70,7 @@ def upload(request):
 #         image_file = request.FILES.get('img_file')
 #         return FileResponse(image_file, content_type='image/png')
         
-        
+@login_required(login_url='accounts:login')
 def send_image(request):
     if request.method == 'POST':
         image_file = request.FILES.get('img_file')
@@ -165,7 +168,7 @@ def send_image(request):
                 context = {'class_name':str(class_name)}
         return JsonResponse(context)
     
-
+@login_required(login_url='accounts:login')
 def send_image_game(request):
     if request.method == 'POST':
         image_file = request.FILES.get('img_file')
@@ -278,7 +281,6 @@ from datetime import datetime
 #     today_obj = datetime.strptime(today, '%Y.%m.%d')
 
 
-from django.contrib.auth.decorators import login_required
 @login_required(login_url='accounts:login')
 def statistics(request):
     print('statistics request user : ', request.user)
@@ -369,10 +371,6 @@ def statistics(request):
     }
     return render(request, 'service/statistics.html', context)
 
-import win32api
-
-def streching_alarm(request):
-    win32api.MessageBox(0, "스트레칭을 할 시간입니다.", "stretching", 64)
     
     
 def test(request):
