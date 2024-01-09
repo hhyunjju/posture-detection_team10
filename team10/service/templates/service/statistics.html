@@ -8,6 +8,41 @@
 		<link rel="stylesheet" type="text/css" href="{% static 'assets/css/service.css' %}">
 		<link rel="icon" href="{%static 'assets/images/logo_page.png' %}" type="image/x-icon" />
 		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+		<style>
+			#statistics {
+				flex-flow: column nowrap;
+			
+			}
+			video{
+				transform: rotateY(180deg);
+				-webkit-transform:rotateY(180deg); /* Safari and Chrome */
+				-moz-transform:rotateY(180deg); /* Firefox */
+			}
+
+			canvas {
+				width: 100% !important; /* 캔버스 너비를 부모 요소에 맞춥니다. */
+				height: auto !important; /* 높이는 자동 조절 */
+			}
+			.top, .middle, .bottom{
+				display:flex;
+				justify-content: space-around;
+				align-items: center;
+			}
+			.left-top-graph, .right-top-graph{
+				width: 35%;
+			}
+			.middle-rate1, .middle-rate2{
+				flex-basis:20%;
+			}
+			.middle-graph{
+				flex-basis:40%
+			}
+			.bottom-graph{
+				width: 60%;
+			}
+			
+
+		</style>
 	</head>
 	<body class="single is-preload">
 		
@@ -174,173 +209,51 @@
 										  updateTime();
 										};
 									</script>
-								</header>
-								<br>
-								<style>
-									video{
-										transform: rotateY(180deg);
-										-webkit-transform:rotateY(180deg); /* Safari and Chrome */
-										-moz-transform:rotateY(180deg); /* Firefox */
-									}
-								</style>
-								</header>
-								<!-- 통계 데이터 섹션 -->
-								<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+								</header><!-----------------------------------header End--------------------------------->
+								
+								<!--------------------------- 통계 html 섹션 ---------------------------->
 								<section id="statistics">
-									<h3>일일 자세 분석</h3>
-									<div class="statistic">
-										<h4>정확한 자세 지속 시간 비율</h4>
-										<p>{{ correct_posture_ratio }} 시간</p>
-									</div>
-									<div class="statistic">
-										<h4>부정확한 자세 지속 시간 비율</h4>
-										<p>{{ incorrect_posture_ratio }} 시간</p>
-									</div>
-									<section id="statistics" style="display: flex; flex-wrap: wrap; justify-content: space-around;">
-										<!-- 막대 그래프 섹션 -->
-										<div class="graph-container">
-											<h3>일일 자세 분석 - 막대 그래프</h3>
-											<canvas id="barChart"></canvas>
-										</div>
-										
-										<!-- 꺾은선 그래프 섹션 -->
-										<div class="graph-container">
-											<h3>일주일 자세 변화 - 꺾은선 그래프</h3>
-											<canvas id="lineChart"></canvas>
-										</div>
-										
-										<!-- 원형 그래프 섹션 -->
-										<div class="graph-container">
-											<h3>일일 자세 요약 - 원형 그래프</h3>
+
+									<div class="top">
+										    <!-- 원형 그래프 섹션 -->
+										<div class="graph-container left-top-graph">
+											<h3>일일 자세 요약</h3>
 											<canvas id="pieChart"></canvas>
 										</div>
-									
-														
-										<!-- 레이더 차트 섹션 -->
-										<div class="graph-container">
-											<h3>자세 유형별 비교 - 레이더 차트</h3>
+										    <!-- 레이더 차트 섹션 -->
+										<div class="graph-container right-top-graph">
+											<h3>자세 유형별 비교</h3>
 											<canvas id="radarChart"></canvas>
 										</div>
-									</section>
-									<style>
-										.graph-container {
-											flex: 1 1 45%; /* 화면의 45%를 차지합니다. */
-											max-width: 45%; /* 최대 너비 제한 */
-											padding: 20px;
-											box-sizing: border-box;
-										}
-										canvas {
-											width: 100% !important; /* 캔버스 너비를 부모 요소에 맞춥니다. */
-											height: auto !important; /* 높이는 자동 조절 */
-										}
-									</style>
-									<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-									<script>
-										window.onload = function() {
-											// Django 템플릿에서 데이터 가져오기
-											var correctPostureRatio = parseFloat("{{ correct_posture_ratio }}");
-											var incorrectPostureRatio = parseFloat("{{ incorrect_posture_ratio }}");
-											var postureCounts = [parseFloat("{{ posture1_cnt }}"), parseFloat("{{ posture2_cnt }}"), parseFloat("{{ posture3_cnt }}"), parseFloat("{{ posture4_cnt }}")];
+									</div>
 
-											// 막대 그래프 생성
-											var barCtx = document.getElementById('barChart').getContext('2d');
-											var barChart = new Chart(barCtx, {
-												type: 'bar',
-												data: {
-													labels: ['정확한 자세', '부정확한 자세'],
-													datasets: [{
-														label: '자세 비율',
-														data: [correctPostureRatio, incorrectPostureRatio],
-														backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)'],
-														borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)'],
-														borderWidth: 1
-													}]
-												},
-												options: {
-													scales: {
-														yAxes: [{
-															ticks: {
-																beginAtZero: true
-															}
-														}]
-													}
-												}
-											});
+									<div class="middle">
+										<div class="statistic">
+											<h4>정확한 자세 지속 시간 비율</h4>
+											<p>{{ correct_posture_ratio }} 시간</p>
+										</div>
+										<div class="statistic">
+											<h4>부정확한 자세 지속 시간 비율</h4>
+											<p>{{ incorrect_posture_ratio }} 시간</p>
+										</div>
+										<!-- 막대 그래프 섹션 -->
+										<div class="graph-container middle-graph">
+											<canvas id="barChart"></canvas>
+										</div>
+									</div>
+										
+									<div class="bottom">
+										    <!-- 꺾은선 그래프 섹션 -->
+										<div class="graph-container bottom-graph">
+											<h3>일주일 자세 변화</h3>
+											<canvas id="lineChart"></canvas>
+										</div>	
+									</div>
 
-
-											// 원형 그래프 생성
-											var pieCtx = document.getElementById('pieChart').getContext('2d');
-											var pieChart = new Chart(pieCtx, {
-												type: 'pie',
-												data: {
-													labels: ['거북목 자세', '턱괴는 자세', '엎드리는 자세', '누워 기대는 자세'],
-													datasets: [{
-														data: postureCounts,
-														backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)', 'rgba(75, 192, 192, 0.2)'],
-														borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)', 'rgba(75, 192, 192, 1)'],
-														borderWidth: 1
-													}]
-												}
-											});
-
-
-											// 꺾은선 그래프 생성
-											var lineCtx = document.getElementById('lineChart').getContext('2d');
-											var lineChart = new Chart(lineCtx, {
-												type: 'line',
-												data: {
-													labels: ['월', '화', '수', '목', '금', '토', '일'],
-													datasets: [{
-														label: '일주일간의 자세 변화',
-														data: [65, 59, 80, 81, 56, 55, 40], // 예시 데이터, 실제 데이터로 대체 필요
-														borderColor: 'rgb(75, 192, 192)',
-														tension: 0.1
-													}]
-												},
-												options: {
-													scales: {
-														yAxes: [{
-															ticks: {
-																beginAtZero: true
-															}
-														}]
-													}
-												}
-											});
-
-											// 레이더 차트 생성
-											var radarCtx = document.getElementById('radarChart').getContext('2d');
-											var radarChart = new Chart(radarCtx, {
-												type: 'radar',
-												data: {
-													labels: ['거북목 자세', '턱괴는 자세', '엎드리는 자세', '누워 기대는 자세'],
-													datasets: [{
-														label: '자세 유형별 비교',
-														data: postureCounts, // 예시 데이터, 실제 데이터로 대체 필요
-														backgroundColor: 'rgba(255, 99, 132, 0.2)',
-														borderColor: 'rgba(255, 99, 132, 1)',
-														borderWidth: 1
-													}]
-												},
-												options: {
-													scales: {
-														r: {
-															angleLines: {
-																display: false
-															},
-															suggestedMin: 0,
-															suggestedMax: 100
-														}
-													}
-												}
-											});
-
-										};
-									</script>
+								</section>
 
 								<footer>
 									<ul class="stats">
-										
 									</ul>
 									<ul class="actions">
 										<!-- 게임화된 통계 페이지로 가는 링크를 추가합니다 -->
@@ -349,9 +262,9 @@
 								</footer>
 							</article>
 
-					</div>
+					</div> <!--main div-->
 
-				<!-- Footer -->
+				<!---------------------------------------------------- Footer ----------------------------------------------------->
 					<section id="footer">
 						<div class="footer-logo">
 							<img src="{%static 'assets/images/logo_page.png' %}" alt="바른자세 로고" />
@@ -413,6 +326,109 @@
 			</div>
 
 		<!-- Scripts -->
+		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+		<script>
+			window.onload = function() {
+				// Django 템플릿에서 데이터 가져오기
+				var correctPostureRatio = parseFloat("{{ correct_posture_ratio }}");
+				var incorrectPostureRatio = parseFloat("{{ incorrect_posture_ratio }}");
+				var postureCounts = [parseFloat("{{ posture1_cnt }}"), parseFloat("{{ posture2_cnt }}"), parseFloat("{{ posture3_cnt }}"), parseFloat("{{ posture4_cnt }}")];
+
+				// 막대 그래프 생성
+				var barCtx = document.getElementById('barChart').getContext('2d');
+				var barChart = new Chart(barCtx, {
+					type: 'bar',
+					data: {
+						labels: ['정확한 자세', '부정확한 자세'],
+						datasets: [{
+							label: '자세 비율',
+							data: [correctPostureRatio, incorrectPostureRatio],
+							backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)'],
+							borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)'],
+							borderWidth: 1
+						}]
+					},
+					options: {
+						scales: {
+							yAxes: [{
+								ticks: {
+									beginAtZero: true
+								}
+							}]
+						}
+					}
+				});
+
+
+				// 원형 그래프 생성
+				var  pieCtx= document.getElementById('pieChart').getContext('2d');
+				var pieChart = new Chart(pieCtx, {
+					type: 'pie',
+					data: {
+						labels: ['거북목 자세', '턱괴는 자세', '엎드리는 자세', '누워 기대는 자세'],
+						datasets: [{
+							data: postureCounts,
+							backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)', 'rgba(75, 192, 192, 0.2)'],
+							borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)', 'rgba(75, 192, 192, 1)'],
+							borderWidth: 1
+						}]
+					},
+				});
+
+
+				// 꺾은선 그래프 생성
+				var lineCtx = document.getElementById('lineChart').getContext('2d');
+				var lineChart = new Chart(lineCtx, {
+					type: 'line',
+					data: {
+						labels: ['월', '화', '수', '목', '금', '토', '일'],
+						datasets: [{
+							label: '일주일간의 자세 변화',
+							data: [65, 59, 80, 81, 56, 55, 40], // 예시 데이터, 실제 데이터로 대체 필요
+							borderColor: 'rgb(75, 192, 192)',
+							tension: 0.1
+						}]
+					},
+					options: {
+						scales: {
+							yAxes: [{
+								ticks: {
+									beginAtZero: true
+								}
+							}]
+						}
+					}
+				});
+
+				// 레이더 차트 생성
+				var radarCtx = document.getElementById('radarChart').getContext('2d');
+				var radarChart = new Chart(radarCtx, {
+					type: 'radar',
+					data: {
+						labels: ['거북목 자세', '턱괴는 자세', '엎드리는 자세', '누워 기대는 자세'],
+						datasets: [{
+							label: '자세 유형별 비교',
+							data: postureCounts, // 예시 데이터, 실제 데이터로 대체 필요
+							backgroundColor: 'rgba(255, 99, 132, 0.2)',
+							borderColor: 'rgba(255, 99, 132, 1)',
+							borderWidth: 1
+						}]
+					},
+					options: {
+						scales: {
+							r: {
+								angleLines: {
+									display: false
+								},
+								suggestedMin: 0,
+								suggestedMax: 100
+							}
+						}
+					}
+				});
+
+			};
+		</script>
 			<script src="{% static 'assets/js/jquery.min.js' %}"></script>
 			<script src="{% static 'assets/js/browser.min.js' %}"></script>
 			<script src="{% static 'assets/js/breakpoints.min.js' %}"></script>

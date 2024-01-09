@@ -1,0 +1,39 @@
+<section id="statistics">
+
+    <div class="top">
+            <!-- 원형 그래프 섹션 -->
+        <div class="graph-container left-top">
+            <h4>일일 자세 요약</h4>
+            <canvas id="pieChart"></canvas>
+        </div>
+            <!-- 레이더 차트 섹션 -->
+        <div class="graph-container right-top">
+            <h3>자세 유형별 비교</h3>
+            <canvas id="radarChart"></canvas>
+        </div>
+    </div>
+
+    <div class="middle">
+        <div class="statistic middle-rate1">
+            <h4>정확한 자세 지속 시간 비율</h4>
+            <p>{{ correct_posture_ratio }} 시간</p>
+        </div>
+        <div class="statistic middle-rate2">
+            <h4>부정확한 자세 지속 시간 비율</h4>
+            <p>{{ incorrect_posture_ratio }} 시간</p>
+        </div>
+        <!-- 막대 그래프 섹션 -->
+        <div class="graph-container middle-graph">
+            <canvas id="barChart"></canvas>
+        </div>
+    </div>
+        
+    <div class="bottom">
+            <!-- 꺾은선 그래프 섹션 -->
+        <div class="graph-container bottom-graph">
+            <h3>일주일 자세 변화</h3>
+            <canvas id="lineChart"></canvas>
+        </div>	
+    </div>
+
+</section>
