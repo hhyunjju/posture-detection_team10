@@ -195,9 +195,7 @@
                 jQuery("#count").html('0');
             }    
             if($('#count').html()=='0'){
-              if(!stretchingAgain){
-                jQuery("#count").html('');
-              } 
+                jQuery("#count").html('<i class="fa-solid fa-hourglass-end"></i>');
             } 
         
         },1000); //1초마다 
@@ -328,7 +326,7 @@ function BIGTIMER(time, min, sec){
       return new Promise(resolve => {
         var sentence = '맞을 때까지 나갈 수 없습니다.\n 다시 해 보세요';
         jQuery("#subscription").html(sentence);
-        jQuery("#successcount").html('Time Out');
+        jQuery("#successcount").html("Time's Up");
         answer = [];
         failSignal();
         resolve();

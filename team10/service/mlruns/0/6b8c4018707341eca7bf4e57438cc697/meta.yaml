@@ -1,4 +1,4 @@
-artifact_uri: file:///C:/Users/user/big%20project/Test_final/team10/team10/service/mlruns/0/6b8c4018707341eca7bf4e57438cc697/artifacts
+artifact_uri: ./service/mlruns/0/6b8c4018707341eca7bf4e57438cc697/artifacts
 end_time: 1704889709815
 entry_point_name: ''
 experiment_id: '0'

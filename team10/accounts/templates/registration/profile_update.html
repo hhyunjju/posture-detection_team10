@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}내 정보 수정{% endblock title %}
+{% block content %}
+<h1>내 정보 수정</h1>
+<div id="main">
+            <p style="font-size:0.9em;font-weight:700; color:#3c3b3b;">Username: {{profile.user.username}}</p>
+            <form method="POST" action="{% url 'accounts:profile_update' %}">
+                {% csrf_token %}
+                    {{form.as_p}}
+                    <button type="submit">저장하기</button>
+                    <button type="button" onclick="location.href='{% url 'accounts:profile' %}'">취소하기
+                    </button>
+            </form>
+{% endblock content %}
+

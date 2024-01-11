@@ -4,7 +4,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>바른자세</title>
+		<title>바른자세 도우미</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" type="text/css" href="{% static 'assets/css/home.css' %}">
@@ -24,10 +24,11 @@
 				align-items: center;
 				z-index: 9999;
 				transition: visibility 0s, opacity 0.5s linear;
+				text-align:center;
 			}
 			.splash-text {
 				text-align: center;
-				font-size: 50px;
+				font-size: 40px;
 				opacity: 0;
 				transform: translateY(-100px);
 				transition: opacity 1s, transform 1s;
@@ -88,7 +89,7 @@
 	<body class="is-preload">
 	<!-- 스플래시 컨테이너 -->
 		<div class="splash-container">
-			<h1 class="splash-text">바른자세에 오신 것을 환영합니다</h1>
+			<h1 class="splash-text">바른자세 도우미에<br> 오신 것을 환영합니다</h1>
 		</div>
 		<!-- Wrapper -->
 			<div id="wrapper">
@@ -102,11 +103,10 @@
 									<li><a href="{% url 'accounts:login' %}?next={{request.path}}">로그인</a></li>
 									<li><a href="{% url 'accounts:signup' %}?next={{request.path}}">회원가입</a></li>
 								{% else %}
-									<li><a href="{% url 'accounts:profile' %}">{{user}}님!</a></li>
+									<li><a href="{% url 'accounts:profile' %}">{{user.profile.nickname}}님!</a></li>
 									<li><a href="{% url 'accounts:logout' %}?next={{request.path}}">로그 아웃</a></li>
 								{% endif %}
 								<li class="menu-item-board"><a href="{% url 'brd:notice_board' %}">게시판</a></li>
-								<li class="menu-item-contact"><a href="{% url 'brd:faq' %}">FAQ</a></li>
 								<li class="menu-item-company"><a href="{% url 'home:intro' %}">회사소개</a></li>
 								<li><a href="{% url 'service:service' %}">서비스</a></li>
 							</ul>
@@ -193,7 +193,7 @@
 									<li>
 										<a href="{% url 'brd:faq' %}">
 											<h3>FAQ</h3>
-											<p>저희의 ~ 알아보세요</p>
+											<p>저희의 바른자세 서비스에 대해 알아보세요</p>
 										</a>
 									</li>
 								</ul>
@@ -212,7 +212,7 @@
 									</div>
 									<div class="meta">
 										<time class="published" id="current-time"></time>
-										<a href="https://data.kma.go.kr/cmmn/main.do" class="author"><span class="name">현재 날씨</span><img src="{%static 'assets/images/avatar.jpg' %}" alt="" /></a>
+									
 									</div>
 									<script>
 										// 현재 날짜와 시간을 가져와서 업데이트하는 함수
@@ -263,26 +263,6 @@
 									<h2><a href="{% url 'service:statistics' %}">통계 페이지로 이동</a></h2>
 									<p>나의 통계를 확인해보세요</p>
 								</div>
-								<div class="meta">
-									<time class="published" id="current-time"></time>
-									<a href="https://data.kma.go.kr/cmmn/main.do" class="author"><span class="name">현재 날씨</span><img src="{%static 'assets/images/avatar.jpg' %}" alt="" /></a>
-								</div>
-								<script>
-									// 현재 날짜와 시간을 가져와서 업데이트하는 함수
-									function updateTime() {
-									  var now = new Date();
-									  var months = ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"];
-									  var formattedDate = months[now.getMonth()] + " " + now.getDate() + ", " + now.getFullYear();
-									
-									  // HTML의 time 요소를 찾아서 현재 날짜와 시간으로 설정
-									  document.getElementById('current-time').textContent = formattedDate;
-									}
-									
-									// 웹 페이지가 로드될 때 함수를 실행
-									window.onload = function() {
-									  updateTime();
-									};
-								</script>
 							</header>
 							<a href="{% url 'service:statistics' %}" class="image featured"><img src="{%static 'assets/images/statistics.png' %}" alt="" /></a>
 							<p>당신의 일일 자세가 어떤지 시각적으로 확인해보세요.</p>
@@ -299,26 +279,6 @@
 										<h2><a href="{% url 'service:game' %}">스트레칭 페이지로 이동</a></h2>
 										<p>하루동안의 피로를 스트레칭으로 풀어보세요</p>
 									</div>
-									<div class="meta">
-										<time class="published" id="current-time"></time>
-										<a href="https://data.kma.go.kr/cmmn/main.do" class="author"><span class="name">현재 날씨</span><img src="{%static 'assets/images/avatar.jpg' %}" alt="" /></a>
-									</div>
-									<script>
-										// 현재 날짜와 시간을 가져와서 업데이트하는 함수
-										function updateTime() {
-										  var now = new Date();
-										  var months = ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"];
-										  var formattedDate = months[now.getMonth()] + " " + now.getDate() + ", " + now.getFullYear();
-										
-										  // HTML의 time 요소를 찾아서 현재 날짜와 시간으로 설정
-										  document.getElementById('current-time').textContent = formattedDate;
-										}
-										
-										// 웹 페이지가 로드될 때 함수를 실행
-										window.onload = function() {
-										  updateTime();
-										};
-									</script>
 								</header>
 								<a href="{% url 'service:game' %}" class="image featured"><img src="{%static 'assets/images/game.png' %}" alt="" /></a>
 								<p>다양한 자세로 몸의 피로를 풀고 돌아가세요.</p>
@@ -330,7 +290,7 @@
 							</article>
 							<!-- Chatbot button -->
 								<div id="chat-button">
-									<img src="{% static 'assets/images/chatboticon.png' %}" alt="Chatbot" width="100" height="100" />
+									<img src="{% static 'assets/images/chatbot.png' %}" alt="Chatbot" width="100" height="100" />
 								</div>
 							
 								
@@ -342,7 +302,7 @@
 						<!-- Pagination -->
 							<ul class="actions pagination">
 								<li><a href="" class="disabled button large previous">이전 페이지</a></li>
-								<li><a href="{% url 'service:service' %}" class="button large next">다음 페이지</a></li>
+								<li><a href="{% url 'service:service' %}" class="button large next">모니터링 서비스 이용하기</a></li>
 							</ul>
 
 					</div>
@@ -352,41 +312,14 @@
 
 						<!-- Intro -->
 							<section id="intro">
-								<a href="https://pokemonkorea.co.kr/" class="logo"><img src="{%static 'assets/images/main_icon.png' %}" alt="" /></a>
+								<a class="logo"><img src="{%static 'assets/images/main_icon.png' %}" alt="" /></a>
 								<header>
 									<h2>당신의 바른자세 도우미</h2>
 									<p>카메라로 당신의 자세를 분석해보고 저희가 시각화해서 알려드릴게요</p>
 								</header>
 							</section>
 
-						<!-- Mini Posts -->
-							<section>
-								<div class="mini-posts">
-									<!-- Mini Post -->
-										<article class="mini-post">
-											<header>
-												<h3><a href="https://www.amc.seoul.kr/asan/healthinfo/disease/diseaseDetail.do?contentId=31866">거북목이란?</a></h3>
-											</header>
-											<a href="https://www.amc.seoul.kr/asan/healthinfo/disease/diseaseDetail.do?contentId=31866" class="image"><img src="{%static 'assets/images/Turtle neck syndrome.png' %}" alt="" /></a>
-										</article>
-
-									<!-- Mini Post -->
-										<article class="mini-post">
-											<header>
-												<h3><a href="https://www.youtube.com/watch?v=-nOgOs4r6Ys">거북목 관리하는 방법</a></h3>
-											</header>
-											<a href="https://www.youtube.com/watch?v=-nOgOs4r6Ys" class="image"><img src="{%static 'assets/images/turtleneck_care.png' %}" alt="" /></a>
-										</article>
-
-									<!-- Mini Post -->
-										<article class="mini-post">
-											<header>
-												<h3><a href="https://health.kdca.go.kr/healthinfo/biz/health/gnrlzHealthInfo/gnrlzHealthInfo/gnrlzHealthInfoView.do?cntnts_sn=5972">질병관리청 거북목 위험성</a></h3>
-											</header>
-											<a href="https://health.kdca.go.kr/healthinfo/biz/health/gnrlzHealthInfo/gnrlzHealthInfo/gnrlzHealthInfoView.do?cntnts_sn=5972" class="image"><img src="{%static 'assets/images/neck.png' %}" alt="" /></a>
-										</article>
-								</div>
-							</section>
+						
 						<!-- About -->
 							<section class="blurb">
 								<h2>About Us</h2>

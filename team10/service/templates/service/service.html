@@ -34,16 +34,25 @@
 			}
 			.video-container p {
 				margin-top: 25px;
+				text-align: center;
 			}
 			#posture-status {
 				position: absolute;
-				bottom: 10px; /* 오른쪽 아래에 위치하기 위한 설정 */
-				right: 30px;
+				top: 0; /* 상단에서 0px 떨어진 곳에 위치 */
+				left: 50%; /* 부모 요소의 가로 중앙 */
+				transform: translateX(-50%); /* X축으로 -50% 이동하여 가로 중앙 정렬 */
 				padding: 5px;
 				font-size: 22px;
+				border-radius: 10px; /* 모서리를 둥글게 */
+				text-align: center; /* 텍스트 중앙 정렬 */
+				
 			}
 			.video-controls{
 				margin-top: 30px;
+			}
+			.video{
+
+				object-fit: cover;
 			}
 		</style>
 		
@@ -225,11 +234,12 @@
 										<button id="startbutton">스트리밍 시작</button>
 										<button id="stopbutton">스트리밍 종료</button>
 									</div>
+									<p>당신의 바른 자세를 녹화하여 통계자료로 제공합니다.</p>
 									<canvas id="canvas" style="visibility: hidden;"></canvas>
 									<div class="output">
 									  <img id="photo" style="visibility: hidden;">
 									</div>
-									<p>당신의 바른 자세를 녹화하여 통계자료로 제공합니다.</p>
+									
 								</div>
 								
 						
@@ -288,6 +298,7 @@
 			<script type="text/javascript">
 				let iconUrl = "{% static 'assets/images/icons/자세경고아이콘.png' %}";
 				let gameiconUrl = "{% static 'assets/images/icons/스트레칭아이콘1.png' %}";
+				let userNickname = "{{ user.profile.nickname }}";
 			</script>
 			
 

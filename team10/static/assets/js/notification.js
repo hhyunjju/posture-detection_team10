@@ -13,8 +13,8 @@ function makeNoti() {
     // 회원가입시 이름을 받으면 => 알림에 이름을 넣을 수 있음
     // 랜덤으로 문구 나가도록 수정 or 라벨 반영해서 문구 수정
     if (Notification.permission === "granted") {
-        globalNotification = new Notification("!!! 자세 경고 !!!", {
-            body: "자세가 올바르지 않습니다.\n건강을 위해 바른 자세를 취해주세요",
+        globalNotification = new Notification("!!!"+userNickname +"님 자세 경고 !!!", {
+            body: userNickname +"님의 자세가 올바르지 않습니다.\n건강을 위해 바른 자세를 취해주세요",
             icon: iconUrl,
             requireInteraction: true, // 사용자 상호작용이 필요
         });

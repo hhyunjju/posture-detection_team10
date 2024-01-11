@@ -6,6 +6,7 @@ from .models import Profile
 from django.contrib import messages
 from django.contrib.auth.views import PasswordChangeView
 from django.urls import reverse_lazy
+from django.views import View
 # 회원가입 뷰 작성
 
 def signup(request):
@@ -28,4 +29,17 @@ class MyPasswordChangeView(PasswordChangeView):
     def form_valid(self, form):
         messages.info(self.request, '비밀번호 변경이 완료되었습니다')
         return super().form_valid(form)
+    
+
+def update(request):
+    profile = get_object_or_404(Profile, user=request.user )
+    if request.method == 'POST':
+        form = ProfileUpdateForm(request.POST, instance = profile)
+        if form.is_valid():
+            form.save()
+            return redirect('/accounts/profile')
+    else:
+        form = ProfileUpdateForm(instance=profile)
+    return render(request, 'registration/profile_update.html', {'form':form, 'profile':profile})
+            
     

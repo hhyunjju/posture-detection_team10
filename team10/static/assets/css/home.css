@@ -3506,7 +3506,7 @@ input, select, textarea {
 	#footer {
 		text-align: center; /* 모든 푸터 내용을 중앙 정렬 */
 		padding: 2em 0; /* 위아래 여백 추가 */
-		background-color: #f8f8f8; /* 푸터 배경색 */
+		/* background-color: #f8f8f8; */
 	}
 	
 	#footer .icons {

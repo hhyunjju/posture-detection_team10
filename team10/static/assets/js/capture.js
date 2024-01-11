@@ -116,9 +116,10 @@ function updatePostureStatusCounts(class_name) {
   
         video.addEventListener('canplay', function(ev){
           if (!streaming) {
-            height = video.videoHeight / (video.videoWidth/width);
+            height = video.videoHeight / (video.videoWidth/(width-6));
             // height = video.videoHeight / (video.videoWidth/width);
-            height = 412 // 원래는 396
+            //height = 412 // 원래는 396
+            height = 407
           
             // Firefox currently has a bug where the height can't be read from
             // the video, so we will make assumptions if this happens.
@@ -146,6 +147,7 @@ function updatePostureStatusCounts(class_name) {
         stopbutton.addEventListener('click', function(ev){
           var videoElement = document.getElementById('video');
           jQuery("#posture-status").html('');
+          videoElement.style.boxShadow = "";
           videoElement.style.border = '';
           closeNotification();
           closeStretchingNotification();
@@ -199,7 +201,7 @@ function updatePostureStatusCounts(class_name) {
       video.play();
       streamingStatus = true;
       sendImg = setInterval(sendImage, 3000);
-      sendGameNoti = setInterval(makeGameNoti, 10000); //1시간으로 바꿀 예정
+      sendGameNoti = setInterval(makeGameNoti, 15000); //1시간으로 바꿀 예정
     }
 
 
@@ -227,19 +229,22 @@ function updatePostureStatusCounts(class_name) {
       updatePostureStatusCounts(num);
       if (num==0) {
         console.log("badPostureCount: ", badPostureCount, ", goodPostureCount: ", goodPostureCount);
-        videoElement.style.border = '8px solid lime';
+        videoElement.style.boxShadow = "0 0 8px 3px rgba(50, 205, 50, 0.7)";
+        videoElement.style.border = '3px solid lime';
         document.getElementById('posture-status').style.color = 'lime'; 
         return 'Good Posture';
       } 
       if(num==-1){
         console.log("badPostureCount: ", badPostureCount, ", goodPostureCount: ", goodPostureCount);
+        videoElement.style.boxShadow = "";
         videoElement.style.border = '';
         document.getElementById('posture-status').style.color = 'blue';
         return 'Unable to detect posture';
       }
       else {
         console.log("badPostureCount: ", badPostureCount, ", goodPostureCount: ", goodPostureCount);
-        videoElement.style.border = '8px solid red';
+        videoElement.style.boxShadow = "0 0 15px 5px rgba(255, 0, 0, 0.7)";
+        videoElement.style.border = '3px solid red';
         document.getElementById('posture-status').style.color = 'red';
         return 'Bad Posture';
       }

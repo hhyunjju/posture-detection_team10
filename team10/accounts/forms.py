@@ -1,4 +1,4 @@
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django import forms
 from .models import Profile
 
@@ -27,3 +27,10 @@ class SignupForm(UserCreationForm):
     
 # save 메서드를 오버라이드하여 사용자 객체를 생성한 후에 해당 사용자의 프로필을 생성합니다. 
 # 이때, Profile 모델에 user, phone_number, address를 저장합니다.
+
+class ProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields =['nickname', 'email', 'phone_number']
+        
+        

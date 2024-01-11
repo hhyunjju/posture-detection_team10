@@ -1,4 +1,4 @@
-artifact_location: file:///C:/Users/user/big%20project/Test_final/team10/team10/service/mlruns/0
+artifact_location: ./service/mlruns/0
 creation_time: 1704889701934
 experiment_id: '0'
 last_update_time: 1704889701934

@@ -14,7 +14,8 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),  # 회원가입 URL 설정
     path('signup/', views.signup, name='signup'),
     path("profile", views.profile, name='profile'),
-    path("password_change/", views.MyPasswordChangeView.as_view(), #success_url을 view에 작성하는 것으로 바꿈
+    path("password/", views.MyPasswordChangeView.as_view(), #success_url을 view에 작성하는 것으로 바꿈
          name="password_change"),
     path('password_change/done/', auth_views.PasswordChangeDoneView.as_view(), name="password_change_done"),
+    path('update/', views.update, name="profile_update"),
 ]

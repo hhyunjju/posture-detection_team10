@@ -1,3 +1,4 @@
+<!--로그인페이지 원본 보존-->
 {% load static %}
 {% load socialaccount %}
 <!DOCTYPE HTML>
@@ -8,98 +9,12 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="{% static 'assets/css/login.css' %}" />
 		<link rel="icon" href="{% static 'assets/images/logo_page.png' %}" type="image/x-icon" />
-		
-		<style>
-			/* 로그인 컨테이너 스타일 */
-			.login-container {
-				display: flex; /* Flexbox를 사용하여 자식 요소들을 유연하게 배치합니다. */
-				flex-direction: column; /* 자식 요소들을 세로로 정렬합니다. */
-				align-items: center; /* 자식 요소들을 가로축 중앙에 배치합니다. */
-				justify-content: center; /* 자식 요소들을 세로축 중앙에 배치합니다. */
-				min-height: 70vh; /* 최소 높이를 화면의 높이와 같게 설정합니다. */
-			}
-			
-			/* 로그인 폼 스타일 */
-			.login-form {
-				background: #fff; /* 배경색을 흰색으로 설정합니다. */
-				padding: 40px 40px 20px 40px; /* 내부 여백을 설정합니다. */
-				border-radius: 7px; /* 모서리를 둥글게 처리합니다. */
-				box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 그림자 효과를 추가합니다. */
-				width: 100%; /* 너비를 100%로 설정하여 부모 요소의 너비에 맞춥니다. */
-				max-width: 400px; /* 최대 너비를 설정하여 폼이 너무 넓어지지 않도록 합니다. */
-			}
-			.signup-text a{
-				color: #2ebaae; 
-			}
-			
-			/* 추가된 버튼 스타일 */
-			.login-form button {
-				width: 100%; /* 버튼의 너비를 폼의 너비와 같게 설정합니다. */
-				padding: 10px 0; /* 버튼의 상하 내부 여백을 설정합니다. */
-				margin-top: 15px; /* 버튼 위의 외부 여백을 설정합니다. */
-			}
-			.login-button{
-				margin-bottom:15px;
-			}
-			.form-button {
-				width: 100%; /* Set the width to 100% of the parent container */
-				padding: 10px 0; /* Uniform padding for top and bottom */
-				margin-top: 15px; /* Consistent margin from the top */
-				display: flex;         /* Flexbox를 활성화합니다. */
-				align-items: center;   /* 세로축에서 중앙 정렬합니다. */
-			}
-			.login-page-form{
-				margin-bottom:0;
-			}
-			#login-main{
-				flex:1;
-				display:flex;
-				justify-content: center;
-				align-items :center;
-			}
-			.signup-text{
-				text-align: center;
-				font-size: 0.9em;
-			}
-			.divider {
-				display: flex;
-				align-items: center;
-				text-align: center;
-				margin: 20px 0;
-			}
-			
-			.divider hr {
-				flex-grow: 1;
-				background: #ccc;
-				height: 1px;
-				border: none;
-				margin: 1em 0;
-			}
-			
-			.divider span {
-				margin: 0 10px;
-				font-size: 11px;
-			}
-			.google img{
-				width:22px;
-				height:22px;
-				margin:0 15px;
-			}
-			.naver img{
-				width:31px;
-				height:31px;
-				margin:0 11px;
-			}
-			#login-main .links{
-				font-size: 11px;
-				margin-top:40px;
-			}
-			</style>
 	</head>
 	<body class="single is-preload">
 
 		<!-- Wrapper -->
 			<div id="wrapper">
+
 				<!-- Header -->
 					<header id="header" style="display: flex; justify-content: space-between; align-items: center; padding: 1em;">
 						<h1 style="flex: 1;">
@@ -115,63 +30,133 @@
 					</header>
 
 				<!-- Main -->
-					<main id="login-main">
+					<div id="main" style="flex: 1;">
 						{% if messages %}
-							<div class="messages" style="display:none;">
+							<div class="messages">
 								{% for message in messages %}
 									<div class="{{ message.tags }}">{{ message }}</div>
 								{% endfor %}
 							</div>
 						{% endif %}
 						<!-- 로그인 컨테이너 -->
-						<div id="loginModal" class="login-container modal login-form">
+						<div class="login-container">
 							<!-- 로그인 모델 -->
-									<div class="modal-content form-group">
-										<!--일반 로그인-->
-										<form class="login-page-form" method="post" action="">
-											{% csrf_token %}
-											<table>
-												{{form.as_table}}
-											</table>
-												<input type="submit" value="로그인" class="form-button login-button">
-										</form>
-										<!--회원가입; form 없음-->
-										{% comment %} <button type="button" class="form-button" onclick="location.href='{% url 'accounts:signup' %}?next={{request.path}}'" >회원가입</button> {% endcomment %}
-										<div class="signup-text">계정이 없으신가요? 
-											<a href="{% url 'accounts:signup' %}?next={{request.path}}">&nbsp&nbsp가입하기</a>
+								<div id="loginModal" class="modal">
+									<div class="modal-content">
+										<div class="form-group">
+											<form method="post" action="" class="login-form">
+												{% csrf_token %}
+												<table>
+													{{form.as_table}}
+												</table>
+													<input type="submit" value="로그인" class="form-button">
+											</form>
+												<button type="button" class="form-button" onclick="location.href='{% url 'accounts:signup' %}?next={{request.path}}'" >회원가입</button>
+												<form action="{% provider_login_url 'google' %}?next={% url 'home:home' %}" method="post">
+													{% csrf_token %}
+													<button class="social_login_button" style="line-height: 0; padding:0;">
+														<img src="{% static 'assets/images/web_neutral_rd_ctn@1x.png' %}">
+													</button>
+												</form>
+												<form action="{% provider_login_url 'naver' %}?next={% url 'home:home' %}" method="post">
+													{% csrf_token %}
+													<button class="social_login_button" style="line-height: 0; padding:0;">
+														<img src="{% static 'assets/images/btnG_official.png' %}" style="height:40px;">
+													</button>
+												</form> 
 										</div>
-										<div class="divider">
-											<hr class="left"><span>또는</span><hr class="right">
-										</div>
-										<!--구글 로그인-->
-										<form class="login-page-form" action="{% provider_login_url 'google' %}?next={% url 'home:home' %}" method="post">
-											{% csrf_token %}
-											<button class="form-button google">
-												<img src="{% static 'assets/images/icons\google.png' %}" alt="바른자세 로고" />
-												<span>Google 계정으로 로그인</span>
-											</button>
-										</form>
-										<!--네이버 로그인-->
-										<form class="login-page-form" action="{% provider_login_url 'naver' %}?next={% url 'home:home' %}" method="post">
-											{% csrf_token %}
-											<button class="form-button naver">
-												<img src="{% static 'assets/images/icons\naver.png' %}" alt="바른자세 로고" />
-												<span>Naver 계정으로 로그인</span>
-											</button>
-										</form> 
-									</div>
-									<div class="links">
-										<a href="javascript:void(0);" onclick="window.open('idFind.html', '_blank', 'height=600,width=600');">개인정보 처리방침</a> | 
-										<a href="javascript:void(0);" onclick="window.open('passwordRecovery.html', '_blank', 'height=600,width=600');">서비스 약관</a>
-									</div>	
+
 											{% comment %} <div class="links">
 												|<a href="javascript:void(0);" onclick="window.open('idFind.html', '_blank', 'height=600,width=600');">아이디 찾기</a> | 
 												<a href="javascript:void(0);" onclick="window.open('passwordRecovery.html', '_blank', 'height=600,width=600');">비밀번호 찾기</a> | 
 												
 											</div>									   {% endcomment %}
-										</main>
+										
+									</div>
+								</div>
+						<style>
+						/* 로그인 컨테이너 스타일 */
+						.login-container {
+							display: flex; /* Flexbox를 사용하여 자식 요소들을 유연하게 배치합니다. */
+							flex-direction: column; /* 자식 요소들을 세로로 정렬합니다. */
+							align-items: center; /* 자식 요소들을 가로축 중앙에 배치합니다. */
+							justify-content: center; /* 자식 요소들을 세로축 중앙에 배치합니다. */
+							min-height: 77vh; /* 최소 높이를 화면의 높이와 같게 설정합니다. */
+							padding: 33px; /* 내부 여백을 설정합니다. */
+						}
+						
+						/* 로그인 폼 스타일 */
+						.login-form {
+							background: #fff; /* 배경색을 흰색으로 설정합니다. */
+							padding: 40px; /* 내부 여백을 설정합니다. */
+							border-radius: 7px; /* 모서리를 둥글게 처리합니다. */
+							box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 그림자 효과를 추가합니다. */
+							width: 100%; /* 너비를 100%로 설정하여 부모 요소의 너비에 맞춥니다. */
+							max-width: 400px; /* 최대 너비를 설정하여 폼이 너무 넓어지지 않도록 합니다. */
+						}
+						
+						/* 추가된 버튼 스타일 */
+						.login-form button {
+							width: 100%; /* 버튼의 너비를 폼의 너비와 같게 설정합니다. */
+							padding: 10px 0; /* 버튼의 상하 내부 여백을 설정합니다. */
+							margin-top: 15px; /* 버튼 위의 외부 여백을 설정합니다. */
+						}
+							.form-button {
+								width: 100%; /* Set the width to 100% of the parent container */
+								padding: 10px 0; /* Uniform padding for top and bottom */
+								margin-top: 15px; /* Consistent margin from the top */
+								/* Add other common styles here */
+							}
+						
+						/* 소셜 로그인 및 회원가입/로그인 버튼 컨테이너 */
+						.buttons-container {
+							display: flex;
+							justify-content: center;
+							align-items: center;
+							margin-top: 1em;
+						}
+						
+						/* 구글 및 네이버 소셜 로그인 버튼 스타일 */
+						.social-login {
+							display: flex;
+							justify-content: center;
+							align-items: center;
+							width: 50%;
+							padding: 10px 0;
+							margin: 0;
+							font-weight: bold;
+							cursor: pointer;
+							border-radius: 20px; /* 둥근 모서리 */
+						}
+						
+						.google-login {
+							background-color: #DB4437; /* 구글 색상 */
+							color: white;
+						}
+						
+						.naver-login {
+							background-color: #1EC800; /* 네이버 색상 */
+							color: white;
+						}
+						
+						/* 회원가입 및 로그인 버튼 스타일 */
+						.auth-button {
+							width: 50%;
+							padding: 10px 0;
+							margin: 0;
+							cursor: pointer;
+						}
+						
+						/* 버튼 텍스트 */
+						.button-text {
+							width: 100%;
+							text-align: center;
+						}
+						
+						</style>
+					</div>
 				<!-- Footer -->
-					<section id="footer" style="padding: 5em 0 1em 0; text-align: center;">
+					<section id="footer" style="background: #f8f8f8; padding: 2em 0; text-align: center;">
 						<div class="footer-logo">
 							<img src="{% static 'assets/images/logo_page.png' %}" alt="바른자세 로고" />
 						</div>
