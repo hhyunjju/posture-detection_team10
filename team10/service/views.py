@@ -353,6 +353,9 @@ def statistics(request):
     badWeek = ','.join(badWeek)
     weekDate = ','.join(weekDate)
     
+    # 오늘 총 이용 시간
+    totalUsageTime = round((todayposecnt / 1200), 2)
+    
 
     context = {
         # 'posture_type_num':posture_type_cnt,
@@ -370,6 +373,7 @@ def statistics(request):
         'correct_week' : correctWeek,
         'bad_week' : badWeek,
         'week_date' : weekDate,
+        'today_usage_t' : totalUsageTime,
     }
     return render(request, 'service/statistics.html', context)
 
