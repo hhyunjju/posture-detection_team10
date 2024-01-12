@@ -273,7 +273,16 @@
 									<div class="links">
 										<a href="javascript:void(0);" onclick="openPrivacyPolicy();">개인정보처리방침</a> | 
 										<a href="javascript:void(0);" onclick="openTermsOfService();">서비스 약관</a>
-									</div>	
+									</div>
+									<script>
+										function openPrivacyPolicy() {
+											window.open('{% url 'home:privacy_policy' %}', 'Privacy Policy', 'width=600,height=400');
+										}
+										
+										function openTermsOfService() {
+											window.open('{% url 'home:terms_of_service' %}', 'Terms of Service', 'width=600,height=400');
+										}
+									</script>	
 											{% comment %} <div class="links">
 												|<a href="javascript:void(0);" onclick="window.open('idFind.html', '_blank', 'height=600,width=600');">아이디 찾기</a> | 
 												<a href="javascript:void(0);" onclick="window.open('passwordRecovery.html', '_blank', 'height=600,width=600');">비밀번호 찾기</a> | 
