@@ -170,7 +170,7 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-SITE_ID = 4
+SITE_ID = 3
 
 # allauth 관련 추가 설정 (옵션)
 ACCOUNT_EMAIL_REQUIRED = True

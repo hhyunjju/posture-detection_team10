@@ -47,7 +47,7 @@ function updatePostureStatusCounts(class_name) {
   }
 
   // 연속된 나쁜 자세 감지 (1분 동안 누적) => 20으로 바꾸기
-  if (badPostureCount >= 2 && !notificationActive) {
+  if (badPostureCount === 3 && !notificationActive) {
       makeNoti();  // 알림 생성
       notificationActive = true;
   }
@@ -201,7 +201,7 @@ function updatePostureStatusCounts(class_name) {
       video.play();
       streamingStatus = true;
       sendImg = setInterval(sendImage, 3000);
-      sendGameNoti = setInterval(makeGameNoti, 15000); //1시간으로 바꿀 예정
+      sendGameNoti = setInterval(makeGameNoti, 20000); //스트레칭 알림 20초 설정 -> 1시간으로 바꿀 예정
     }
 
 

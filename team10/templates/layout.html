@@ -26,7 +26,6 @@
 									<li><a href="{% url 'accounts:logout' %}?next={{request.path}}">로그 아웃</a></li>
 								{% endif %}
 								<li class="menu-item-board"><a href="{% url 'brd:notice_board' %}">게시판</a></li>
-								<li class="menu-item-contact"><a href="{% url 'brd:faq' %}">FAQ</a></li>
 								<li class="menu-item-company"><a href="{% url 'home:intro' %}">회사소개</a></li>
 								<li><a href="{% url 'service:service' %}">서비스</a></li>
 							</ul>
@@ -65,11 +64,11 @@
 									});
 								
 									function redirectToPageBasedOnQuery(query) {
-										if (query.includes('통계 결과')) {
+										if (query.includes('통계 결과', '통계', '기록')) {
 											window.location.href = '{% url 'service:statistics' %}';
-										} else if (query.includes('모니터링')) {
+										} else if (query.includes('모니터링', '서비스', '카메라')) {
 											window.location.href = '{% url 'service:service' %}';
-										} else if (query.includes('FAQ')) {
+										} else if (query.includes('FAQ','질문사항','질문', '')) {
 											window.location.href = '{% url 'brd:faq' %}';
 										} else if (query.includes('게시판')) {
 											window.location.href = '{% url 'brd:notice_board' %}';
@@ -113,7 +112,7 @@
 									<li>
 										<a href="{% url 'brd:faq' %}">
 											<h3>FAQ</h3>
-											<p>저희의 ~ 알아보세요</p>
+											<p>저희의 바른자세 서비스에 대해 알아보세요</p>
 										</a>
 									</li>
 								</ul>

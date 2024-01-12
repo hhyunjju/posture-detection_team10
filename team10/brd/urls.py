@@ -1,10 +1,13 @@
 from django.urls import path
 from . import views
+from .views import search_view
 
 app_name = 'brd'
 
 urlpatterns = [
     path('', views.list, name='notice_board'), 
+    path('', views.list, name='list'),
+    path('search/', search_view, name='search'),  # 검색 URL 패턴을 추가합니다.
     path('<int:no>/', views.detail, name='detail'),
     path('update/<id>/', views.post_update , name='update'),
     path('delete/<id>/', views.post_delete , name='delete'), 

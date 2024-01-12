@@ -130,7 +130,6 @@
                                 <li><a href="{% url 'accounts:logout' %}?next={{request.path}}">로그 아웃</a></li>
                             {% endif %}
                             <li class="menu-item-board"><a href="{% url 'brd:notice_board' %}">게시판</a></li>
-                            <li class="menu-item-contact"><a href="{% url 'brd:faq' %}">FAQ</a></li>
                             <li class="menu-item-company"><a href="{% url 'home:intro' %}">회사소개</a></li>
                             <li><a href="{% url 'service:service' %}">서비스</a></li>
                         </ul>
@@ -217,7 +216,7 @@
                     <li>
                         <a href="{% url 'brd:faq' %}">
                             <h3>FAQ</h3>
-                            <p>저희의 ~ 알아보세요</p>
+                            <p>저희의 바른자세 서비스에 대해 알아보세요</p>
                         </a>
                     </li>
                 </ul>

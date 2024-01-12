@@ -8,7 +8,6 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="{% static 'assets/css/login.css' %}" />
 		<link rel="icon" href="{% static 'assets/images/logo_page.png' %}" type="image/x-icon" />
-		
 		<style>
 			/* 로그인 컨테이너 스타일 */
 			.login-container {
@@ -94,15 +93,126 @@
 				font-size: 11px;
 				margin-top:40px;
 			}
-			</style>
+			/* Header */
+
+			body {
+				padding-top: 4em; /* 헤더가 고정되어 있으므로 본문의 상단 패딩을 헤더 높이만큼 설정 */
+			}
+
+			#header {
+				display: flex;
+				justify-content: space-between; /* 로고와 링크 목록 사이의 공간을 균등하게 분배 */
+				background-color: #ffffff;
+				border-bottom: solid 1px rgba(160, 160, 160, 0.3);
+				height: 3.5em;
+				left: 0;
+				line-height: 3.5em;
+				position: fixed;
+				top: 0;
+				width: 100%;
+				z-index: 10000;
+				align-items: center; /* 세로축 중앙 정렬 */
+				padding: 0 1.5em; /* 좌우 내부 여백 추가 */
+			}
+
+			#header a {
+				color: inherit;
+				text-decoration: none;
+			}
+
+			#header ul {
+				list-style: none;
+				margin: 0;
+				padding-left: 0;
+				display: flex; /* 리스트를 가로로 정렬 */
+				align-items: center; /* 리스트 항목들을 세로축 중앙에 위치 */
+			}
+
+			#header ul li {
+				padding-left: 0;
+				margin-left: 1em; /* 리스트 항목 사이 간격 조절 */
+			}
+
+			#header h1 {
+				height: inherit;
+				line-height: inherit;
+				padding: 0;
+				white-space: nowrap;
+				margin: 0; /* 기존 마진 제거 */
+				flex: 0 0 auto; /* 로고 크기에 맞게 조정 */
+			}
+
+			#header h1 a {
+				font-size: 0.7em;
+			}
+
+			#header .links {
+				flex: 1;
+				height: inherit;
+				line-height: inherit;
+				margin-left: 1.5em;
+				overflow: hidden;
+				padding-left: 1.5em;
+			}
+
+			#header .links ul li {
+				border-left: solid 1px rgba(160, 160, 160, 0.3);
+				line-height: 1;
+				padding-left: 1em;
+				transition: all 0.3s ease; /* 부드러운 전환 효과를 위한 설정 */
+			}
+
+			#header .links ul li:first-child {
+				border-left: 0;
+				margin-left: 0;
+				padding-left: 0;
+			}
+
+			#header .links ul li a {
+				font-family: "Raleway", Helvetica, sans-serif;
+				font-size: 0.7em;
+				font-weight: 400;
+				letter-spacing: 0.25em;
+				text-transform: uppercase;
+				color: #000; /* 기본 글자 색상 */
+				transition: color 0.3s ease, transform 0.3s ease; /* 색상과 변환 효과에 대한 전환 설정 */
+			}
+
+			#header .links ul li a:hover {
+				color: #3498db; /* 글자 색상을 변경하고 싶으면 이 값을 조정하세요 */
+				transform: translateY(-5px); /* 버튼이 약간 위로 움직이는 효과 */
+			}
+
+			@media screen and (max-width: 980px) {
+
+				#header .links {
+					display: none; /* 화면이 작아질 경우 링크를 숨깁니다 */
+				}
+
+			}
+
+			@media screen and (max-width: 736px) {
+
+				#header {
+					height: 2.75em;
+					line-height: 2.75em;
+				}
+
+				#header h1 {
+					padding: 0 0 0 1em;
+				}
+
+			}
+
+		</style>
 	</head>
 	<body class="single is-preload">
 
 		<!-- Wrapper -->
 			<div id="wrapper">
 				<!-- Header -->
-					<header id="header" style="display: flex; justify-content: space-between; align-items: center; padding: 1em;">
-						<h1 style="flex: 1;">
+					<header id="header">
+						<h1>
 							<a href="/"><img src="{% static 'assets/images/logo_page.png' %}" style="width:45px; height:auto;"></a>
 						</h1>
 						<nav class="links" style="flex: 2;">
@@ -161,8 +271,8 @@
 										</form> 
 									</div>
 									<div class="links">
-										<a href="javascript:void(0);" onclick="window.open('idFind.html', '_blank', 'height=600,width=600');">개인정보 처리방침</a> | 
-										<a href="javascript:void(0);" onclick="window.open('passwordRecovery.html', '_blank', 'height=600,width=600');">서비스 약관</a>
+										<a href="javascript:void(0);" onclick="openPrivacyPolicy();">개인정보처리방침</a> | 
+										<a href="javascript:void(0);" onclick="openTermsOfService();">서비스 약관</a>
 									</div>	
 											{% comment %} <div class="links">
 												|<a href="javascript:void(0);" onclick="window.open('idFind.html', '_blank', 'height=600,width=600');">아이디 찾기</a> | 
@@ -180,50 +290,7 @@
 							<li><a href="https://facebook.com" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
 							<li><a href="https://instagram.com" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
 							<li><a href="mailto:your@email.com" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
-						</ul>
-						<div class="policy-links">
-							| <a href="javascript:void(0);" onclick="openPrivacyPolicy();">개인정보처리방침</a>
-							| <a href="javascript:void(0);" onclick="openTermsOfService();">이용약관</a>
-							| <a href="javascript:void(0);" onclick="openFaq();">자주묻는질문</a>
-							| <a href="javascript:void(0);" onclick="openDataPolicy();">데이터베이스이용약관</a> |
-						</div>
-						<script>
-							function openPrivacyPolicy() {
-								var privacyWindow = window.open('', 'Privacy Policy', 'width=600,height=400');
-								privacyWindow.document.write('<html><head><title>개인정보처리방침</title></head><body>');
-								privacyWindow.document.write('<h1>개인정보처리방침</h1>');
-								privacyWindow.document.write('<p>여기에 개인정보처리방침 내용을 작성합니다.</p>');
-								privacyWindow.document.write('</body></html>');
-								privacyWindow.document.close();
-							}
-							
-							function openTermsOfService() {
-								var termsWindow = window.open('', 'Terms of Service', 'width=600,height=400');
-								termsWindow.document.write('<html><head><title>이용약관</title></head><body>');
-								termsWindow.document.write('<h1>이용약관</h1>');
-								termsWindow.document.write('<p>여기에 이용약관 내용을 작성합니다.</p>');
-								termsWindow.document.write('</body></html>');
-								termsWindow.document.close();
-							}
-						
-							function openFaq() {
-								var faqWindow = window.open('', 'FAQ', 'width=600,height=400');
-								faqWindow.document.write('<html><head><title>자주묻는질문</title></head><body>');
-								faqWindow.document.write('<h1>자주묻는질문</h1>');
-								faqWindow.document.write('<p>여기에 자주묻는질문 내용을 작성합니다.</p>');
-								faqWindow.document.write('</body></html>');
-								faqWindow.document.close();
-							}
-							
-							function openDataPolicy() {
-								var dataPolicyWindow = window.open('', 'Data Policy', 'width=600,height=400');
-								dataPolicyWindow.document.write('<html><head><title>데이터베이스이용약관</title></head><body>');
-								dataPolicyWindow.document.write('<h1>데이터베이스이용약관</h1>');
-								dataPolicyWindow.document.write('<p>여기에 데이터베이스이용약관 내용을 작성합니다.</p>');
-								dataPolicyWindow.document.write('</body></html>');
-								dataPolicyWindow.document.close();
-							}
-						</script>						
+						</ul>						
 						<p class="copyright">
 							<a href="https://aivle.edu.kt.co.kr/home/main/goMenuPage?mcd=MC00000034">KT Aivle School</a> Designed by Aivle 4기 10조.
 						</p>
