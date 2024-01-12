@@ -22,7 +22,7 @@
 									<li><a href="{% url 'accounts:login' %}?next={{request.path}}">로그인</a></li>
 									<li><a href="{% url 'accounts:signup' %}?next={{request.path}}">회원가입</a></li>
 								{% else %}
-									<li><a href="{% url 'accounts:profile' %}">{{user}}님!</a></li>
+									<li><a href="{% url 'accounts:profile' %}">{{user.profile.nickname}}님!</a></li>
 									<li><a href="{% url 'accounts:logout' %}?next={{request.path}}">로그 아웃</a></li>
 								{% endif %}
 								<li class="menu-item-board"><a href="{% url 'brd:notice_board' %}">게시판</a></li>
