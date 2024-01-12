@@ -7,6 +7,30 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="{% static 'assets/css/login.css' %}" />
 		<link rel="icon" href="{% static 'assets/images/logo_page.png' %}" type="image/x-icon" />
+		<style>
+			/* 라벨을 왼쪽으로 정렬 */
+			th {
+				text-align: left;
+				vertical-align: top;
+				padding-right: 10px; /* 라벨과 필드 사이의 간격을 조정 */
+			}
+
+			/* 입력 필드의 스타일을 조정 */
+			input, select, textarea {
+				width: 100%; /* 필드를 부모 요소의 100% 너비로 설정 */
+				padding: 0.5em; /* 필드 안쪽의 여백을 설정 */
+				margin-bottom: 0.5em; /* 필드 아래쪽의 여백을 설정 */
+			}
+
+			/* 도움말 텍스트 스타일 조정 */
+			.help-text {
+				display: block;
+				margin-bottom: 0.5em; /* 도움말 텍스트 아래쪽의 여백을 설정 */
+				color: #666; /* 도움말 텍스트의 색상을 설정 */
+				font-size: 0.9em; /* 도움말 텍스트의 글꼴 크기를 설정 */
+			}
+
+		</style>
 	</head>
 	<body class="single is-preload">
 
@@ -20,7 +44,6 @@
 							<ul>
 								<li class="menu-item-login"><a href="{% url 'accounts:login' %}">로그인</a></li>
 								<li class="menu-item-register"><a href="{% url 'accounts:signup' %}">회원가입</a></li>
-								<li class="menu-item-contact"><a href="{% url 'brd:faq' %}">문의하기</a></li>
 								<li class="menu-item-company"><a href="{% url 'home:intro' %}">회사소개</a></li>
 							</ul>
 						</nav>
@@ -29,19 +52,31 @@
 				<!-- Main -->
 					<div id="main">
                         <!-- 회원가입 폼 -->
-                            <div id="registerModal" class="modal">
-                                <div class="modal-content">
-                                <form method="post" action="">
+						<div id="registerModal" class="modal">
+							<div class="modal-content">
+								<form method="post" action="">
 									{% csrf_token %}
-                                    <div class="container">
+									<div class="container">
 										<table>
-											{{form.as_table}}
+											{% for field in form %}
+											<tr>
+												<th>{{ field.label_tag }}</th>
+												<td>
+													{% if field.help_text %}
+													<span class="help-text" style="display: block;">{{ field.help_text }}</span>
+													{% endif %}
+													{{ field }}
+													<br>
+												</td>
+											</tr>
+											{% endfor %}
 										</table>
 										<input type="submit" value="회원가입"/>
-                                    </div>
-                                </form>
-                                </div>
-                            </div>
+									</div>
+								</form>
+							</div>
+						</div>
+						
 				<!-- Footer -->
 					<section id="footer">
 						<div class="footer-logo">

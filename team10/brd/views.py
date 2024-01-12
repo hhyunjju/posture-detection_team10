@@ -39,7 +39,6 @@ def post_create(request):
         if form.is_valid():
             # DB에 추가
             # cleaned_data : dictionary
-            # post = Post.objects.create(**form.cleaned_data)
             post = form.save(commit=False)
             post.ip = request.META['REMOTE_ADDR']
             post.save()
@@ -71,12 +70,6 @@ def post_delete(request, id):
     else:
         return render(request, 'brd/post_delete.html', {'post':post})
 
-def faq_view(request):
-    # FAQ 페이지에 필요한 데이터를 처리
-    # 예시: context = {'faq_data': faq_data}
-
-    # FAQ 페이지의 템플릿을 렌더링하여 반환
-    return render(request, 'brd/faq.html')
 
 def comments_create(request, pk):
     #post가져오기
@@ -94,3 +87,28 @@ def comments_delete(request, post_pk, comment_pk):
         comment = get_object_or_404(Comment, id=comment_pk)
         comment.delete()
         return redirect('brd:detail', post_pk)
+
+# 검색기능 구현    
+def post_list(request):
+    keyword = request.GET.get('keyword', '')
+    posts = Post.objects.all()
+
+    if keyword:
+        posts = posts.filter(title__icontains=keyword)  # title 필드에서 keyword를 포함하는 Post를 필터링
+
+    context = {
+        'posts': posts,
+        'keyword': keyword,  # 템플릿에서 검색어를 사용할 수 있도록 컨텍스트에 추가
+    }
+    
+    return render(request, 'brd/list.html', context)
+
+def search_view(request):
+    # 사용자의 입력을 'keyword' GET 파라미터에서 가져옵니다.
+    query = request.GET.get('keyword', '')
+    
+    # Post 모델에서 'title' 필드에 query가 포함되어 있는 객체를 필터링합니다.
+    results = Post.objects.filter(title__icontains=query)
+    
+    # 검색 결과와 검색어를 'search_results.html' 템플릿에 전달합니다.
+    return render(request, 'search_results.html', {'results': results, 'query': query})

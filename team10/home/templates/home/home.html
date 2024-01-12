@@ -105,10 +105,10 @@
 								{% else %}
 									<li><a href="{% url 'accounts:profile' %}">{{user.profile.nickname}}님!</a></li>
 									<li><a href="{% url 'accounts:logout' %}?next={{request.path}}">로그 아웃</a></li>
+									<li class="menu-item-board"><a href="{% url 'brd:notice_board' %}">게시판</a></li>
+									<li><a href="{% url 'service:service' %}">서비스</a></li>
 								{% endif %}
-								<li class="menu-item-board"><a href="{% url 'brd:notice_board' %}">게시판</a></li>
 								<li class="menu-item-company"><a href="{% url 'home:intro' %}">회사소개</a></li>
-								<li><a href="{% url 'service:service' %}">서비스</a></li>
 							</ul>
 						</nav>
 						<nav class="main">
@@ -145,22 +145,18 @@
 									});
 								
 									function redirectToPageBasedOnQuery(query) {
-										if (query.includes('통계 결과')) {
-											window.location.href = '{% url 'service:statistics' %}';
-										} else if (query.includes('모니터링')) {
-											window.location.href = '{% url 'service:service' %}';
-										} else if (query.includes('FAQ')) {
-											window.location.href = '{% url 'brd:faq' %}';
+										if (query.includes('통계 결과', '통계', '기록')) {
+											window.location.href = '{% url "service:statistics" %}';
+										} else if (query.includes('모니터링', '서비스', '카메라')) {
+											window.location.href = '{% url "service:service" %}';
 										} else if (query.includes('게시판')) {
-											window.location.href = '{% url 'brd:notice_board' %}';
+											window.location.href = '{% url "brd:notice_board" %}';
 										} else if (query.includes('회사소개')) {
-											window.location.href = '{% url 'home:intro' %}';
+											window.location.href = '{% url "home:intro" %}';
 										} else if (query.includes('회원가입')) {
-											window.location.href = '{% url 'accounts:signup' %}';
-										} else if (query.includes('모델성능')) {
-											window.location.href = '{% url 'service:model' %}';
+											window.location.href = '{% url "accounts:signup" %}';
 										} else if (query.includes('게임')) {
-											window.location.href = '{% url 'service:game' %}';
+											window.location.href = '{% url "service:game" %}';
 										} else {
 											// 다른 검색어에 대한 처리 (옵션)
 											// 예: window.location.href = '/search?query=' + encodeURIComponent(query);
@@ -172,6 +168,9 @@
 						<!-- Links -->
 							<section>
 								<ul class="links">
+									{% if not user.is_authenticated %}		
+									<li><a href="{% url 'accounts:login' %}?next={{request.path}}" class="button large">로그인</a></li>
+									{% else %}							
 									<li>
 										<a href="{% url 'service:service' %}">
 											<h3>모니터링</h3>
@@ -190,12 +189,7 @@
 											<p>결과를 다른 사람들과 비교해 보고 질문해 보세요</p>
 										</a>
 									</li>
-									<li>
-										<a href="{% url 'brd:faq' %}">
-											<h3>FAQ</h3>
-											<p>저희의 바른자세 서비스에 대해 알아보세요</p>
-										</a>
-									</li>
+									{% endif %}
 								</ul>
 							</section>
 					</section>
@@ -301,7 +295,6 @@
 							</div>
 						<!-- Pagination -->
 							<ul class="actions pagination">
-								<li><a href="" class="disabled button large previous">이전 페이지</a></li>
 								<li><a href="{% url 'service:service' %}" class="button large next">모니터링 서비스 이용하기</a></li>
 							</ul>
 
@@ -328,9 +321,6 @@
 									현대 직장인들은 장시간의 컴퓨터 및 스마트폰 사용으로 인해, <strong>거북목과 같이 올바르지 못한 자세</strong>를 취함으로써 발생하는 여러 건강 문제를 지속적으로 경험하고 있습니다. 거북목은 허리와 목의 근육들이 지속적인 긴장 상태에 놓이면서 발생하는 문제로, 이로 인해 신체적 불편함과 함께 생산성 감소 및 워크-라이프 밸런스 문제를 유발할 수 있습니다.<br>
 									또한, 최근 <strong>재택근무가 늘어나며 직장인을 중심으로 바른 자세에 대한 관심이 증가</strong>하고 있으며, 이로 인해 재택근무자를 위한 셀프 자세 교정 상품들의 판매가 지속적으로 늘어나는 것을 확인했습니다.
 								</p>								  
-								<ul class="actions">
-									<li><a href="{% url 'brd:faq' %}" class="button">더 알아보기</a></li>
-								</ul>
 							</section>
 
 						<!-- Footer -->
@@ -345,10 +335,11 @@
 									<li><a href="mailto:your@email.com" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
 								</ul>
 								<div class="policy-links">
-									| <a href="javascript:void(0);" onclick="openPrivacyPolicy();">개인정보처리방침</a>
+									<a href="javascript:void(0);" onclick="openPrivacyPolicy();">개인정보처리방침</a>
 									| <a href="javascript:void(0);" onclick="openTermsOfService();">이용약관</a>
 									| <a href="javascript:void(0);" onclick="openFaq();">자주묻는질문</a>
-									| <a href="javascript:void(0);" onclick="openDataPolicy();">데이터베이스이용약관</a> |
+									<br>
+									<a href="javascript:void(0);" onclick="openDataPolicy();">데이터베이스이용약관</a>
 								</div>
 								<script>
 									function openPrivacyPolicy() {
@@ -357,10 +348,6 @@
 									
 									function openTermsOfService() {
 										window.open('{% url 'home:terms_of_service' %}', 'Terms of Service', 'width=600,height=400');
-									}
-									
-									function openFaq() {
-										window.open('{% url 'brd:faq' %}', 'FAQ', 'width=600,height=400');
 									}
 									
 									function openDataPolicy() {
@@ -403,8 +390,6 @@
 					setTimeout(() => {
 						document.querySelector('.splash-container').style.opacity = '0';
 						document.querySelector('.splash-container').style.visibility = 'hidden';
-						// 혹은 스플래시 컨테이너를 DOM에서 제거하려면:
-						// document.querySelector('.splash-container').remove();
 					}, 2222); // 애니메이션 지속 시간을 조정하세요
 				});
 			</script>		

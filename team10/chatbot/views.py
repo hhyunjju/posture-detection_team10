@@ -77,28 +77,6 @@ agent_executor = AgentExecutor(
     return_intermediate_steps=True,
 )
 
-# result = agent_executor({"input": "사용요금 조회는 어떻게 하죠"})
-# result["output"]
-
-# ----------- ㄴ---여기까지: langchain model 만들기 -------------
-
-# GPT-3.5 모델과 히스토리를 기반으로 답변 생성하는 response 함수 정의------
-# from langchain.schema import AIMessage, HumanMessage, SystemMessage
-# def response(message, history, additional_input_info):
-#     history_langchain_format = []
-#     for human, ai in history:
-#         history_langchain_format.append(HumanMessage(content=human))
-#         history_langchain_format.append(AIMessage(content=ai))
-#     # 새로운 사용자 메시지 추가
-#     history_langchain_format.append(HumanMessage(content=message))
-    
-#     # AgentExecutor를 사용하여 응답 생성
-#     result = agent_executor({"input": message, "history": history_langchain_format})
-    
-#     # LangChain의 출력에서 AI의 마지막 메시지 가져오기
-#     ai_response = result['output']
-#     return ai_response
-
 #-------AJAX 요청을 처리하는 뷰-----------------
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt

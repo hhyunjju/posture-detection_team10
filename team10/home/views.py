@@ -16,8 +16,5 @@ def privacy_policy(request):
 def terms_of_service(request):
     return render(request, 'home/terms_of_service.html')
 
-# def faq(request):
-#     return render(request, 'home/faq.html')
-
 def data_policy(request):
     return render(request, 'home/data_policy.html')

@@ -48,7 +48,6 @@
 		</style> <!--------------------------------css끝------------------------------------->
 	</head>
 	<body class="single is-preload">
-		
 		<!-- Wrapper -->
 			<div id="wrapper">
 
@@ -65,9 +64,8 @@
 									<li><a href="{% url 'accounts:logout' %}?next={{request.path}}">로그 아웃</a></li>
 								{% endif %}
 								<li class="menu-item-board"><a href="{% url 'brd:notice_board' %}">게시판</a></li>
-								<li class="menu-item-contact"><a href="{% url 'brd:faq' %}">FAQ</a></li>
-								<li class="menu-item-company"><a href="{% url 'home:intro' %}">회사소개</a></li>
 								<li><a href="{% url 'service:service' %}">서비스</a></li>
+								<li class="menu-item-company"><a href="{% url 'home:intro' %}">회사소개</a></li>
 							</ul>
 						</nav>
 						<nav class="main">
@@ -104,22 +102,18 @@
 									});
 								
 									function redirectToPageBasedOnQuery(query) {
-										if (query.includes('통계 결과')) {
-											window.location.href = '{% url 'service:statistics' %}';
-										} else if (query.includes('모니터링')) {
-											window.location.href = '{% url 'service:service' %}';
-										} else if (query.includes('FAQ')) {
-											window.location.href = '{% url 'brd:faq' %}';
+										if (query.includes('통계 결과', '통계', '기록')) {
+											window.location.href = '{% url "service:statistics" %}';
+										} else if (query.includes('모니터링', '서비스', '카메라')) {
+											window.location.href = '{% url "service:service" %}';
 										} else if (query.includes('게시판')) {
-											window.location.href = '{% url 'brd:notice_board' %}';
+											window.location.href = '{% url "brd:notice_board" %}';
 										} else if (query.includes('회사소개')) {
-											window.location.href = '{% url 'home:intro' %}';
+											window.location.href = '{% url "home:intro" %}';
 										} else if (query.includes('회원가입')) {
-											window.location.href = '{% url 'accounts:signup' %}';
-										} else if (query.includes('모델성능')) {
-											window.location.href = '{% url 'service:model' %}';
+											window.location.href = '{% url "accounts:signup" %}';
 										} else if (query.includes('게임')) {
-											window.location.href = '{% url 'service:game' %}';
+											window.location.href = '{% url "service:game" %}';
 										} else {
 											// 다른 검색어에 대한 처리 (옵션)
 											// 예: window.location.href = '/search?query=' + encodeURIComponent(query);
@@ -147,12 +141,6 @@
 										<a href="{% url 'brd:notice_board' %}">
 											<h3>게시판</h3>
 											<p>결과를 다른 사람들과 비교해 보고 질문해 보세요</p>
-										</a>
-									</li>
-									<li>
-										<a href="{% url 'brd:faq' %}">
-											<h3>FAQ</h3>
-											<p>저희의 ~ 알아보세요</p>
 										</a>
 									</li>
 								</ul>
@@ -199,15 +187,15 @@
 								<section id="statistics">
 									<div class="statistic">
 										<h4>총 이용 시간</h4>
-										<p id="totalRatio"></p>
+										<p id="totalRatio">{{today_usage_t}} 시간</p>
 									</div>
 									<div class="statistic">
 										<h4>정확한 자세 지속 시간 비율</h4>
-										<p>{{ correct_posture_ratio }} 시간</p>
+										<p>{{ correct_posture_ratio }} %</p>
 									</div>
 									<div class="statistic">
 										<h4>부정확한 자세 지속 시간 비율</h4>
-										<p>{{ incorrect_posture_ratio }} 시간</p>
+										<p>{{ incorrect_posture_ratio }} %</p>
 									</div>
 									<section id="statistics" style="display: flex; flex-wrap: wrap; justify-content: space-around;">
 										<!-- 막대 그래프 섹션 -->
@@ -243,7 +231,10 @@
 										</ul>
 										<ul class="actions">
 											<!-- 게임화된 통계 페이지로 가는 링크를 추가합니다 -->
-											<li><a href="{% url 'service:game' %}" class="button large">자세 교정 게임하기</a></li>
+											<li>
+												<a href="{% url 'service:game' %}" class="button large">자세 교정 게임하기</a>
+												<button onclick="downloadAllCharts()" class="button large">통계 결과 다운로드</button>
+											</li>
 										</ul>
 									</footer>
 
@@ -386,11 +377,6 @@
 											correct = correct.map(Number);
 											bad = bad.map(Number);
 
-											console.log('바른 자세 비율 : '+correct);
-											console.log('나쁜 자세 비율 : '+bad);
-											console.log('날짜 : '+weekdate);
-
-
 											// 막대 그래프 생성
 											var barCtx = document.getElementById('barChart').getContext('2d');
 											var barChart = new Chart(barCtx, {
@@ -502,10 +488,6 @@
 					window.open('{% url 'home:terms_of_service' %}', 'Terms of Service', 'width=600,height=400');
 				}
 				
-				function openFaq() {
-					window.open('{% url 'brd:faq' %}', 'FAQ', 'width=600,height=400');
-				}
-				
 				function openDataPolicy() {
 					window.open('{% url 'home:data_policy' %}', 'Data Policy', 'width=600,height=400');
 				}
@@ -515,5 +497,57 @@
 			<script src="{% static 'assets/js/breakpoints.min.js' %}"></script>
 			<script src="{% static 'assets/js/util.js' %}"></script>
 			<script src="{% static 'assets/js/main.js' %}"></script>
+			<script>
+				function downloadAllCharts() {
+					// 각 차트의 이미지 URL을 가져오는 함수
+					function getImageUrl(chartId) {
+						var chart = Chart.getChart(chartId);
+						return chart ? chart.toBase64Image() : '';
+					}
+				
+					// 모든 차트의 이미지 URL을 배열로 생성
+					var chartImages = [
+						getImageUrl('barChart'),
+						getImageUrl('lineChart'),
+						getImageUrl('pieChart'),
+						getImageUrl('radarChart')
+					];
+				
+					// 캔버스 생성 및 크기 설정
+					var canvas = document.createElement('canvas');
+					var ctx = canvas.getContext('2d');
+					var chartWidth = 400; // 각 차트의 너비
+					var chartHeight = 400; // 각 차트의 높이
+					canvas.width = chartWidth * 2; // 2개 차트 너비
+					canvas.height = chartHeight * 2; // 2개 차트 높이
+				
+					// 이미지를 캔버스에 그리는 함수
+					function drawImageOnCanvas(imageUrl, index) {
+						return new Promise((resolve, reject) => {
+							var img = new Image();
+							img.onload = function() {
+								var x = (index % 2) * chartWidth; // x 위치 (0 또는 chartWidth)
+								var y = Math.floor(index / 2) * chartHeight; // y 위치 (0 또는 chartHeight)
+								ctx.drawImage(img, x, y, chartWidth, chartHeight); // 이미지 그리기
+								resolve();
+							};
+							img.onerror = reject;
+							img.src = imageUrl;
+						});
+					}
+				
+					// 모든 차트 이미지를 순서대로 캔버스에 그린 후 이미지로 다운로드
+					Promise.all(chartImages.map(drawImageOnCanvas)).then(() => {
+						var finalImage = canvas.toDataURL("image/png");
+						var link = document.createElement('a');
+						link.href = finalImage;
+						link.download = 'allCharts.png';
+						document.body.appendChild(link);
+						link.click();
+						document.body.removeChild(link);
+					});
+				}
+				
+			</script>
 	</body>
 </html>

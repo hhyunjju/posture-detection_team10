@@ -1,19 +1,8 @@
-
-
-    // The width and height of the captured photo. We will set the
-    // width to the value defined here, but the height will be
-    // calculated based on the aspect ratio of the input stream.
-  
-    var width = 720;    // We will scale the photo width to this
-    var height = 0;     // This will be computed based on the input stream
-  
-    // |streaming| indicates whether or not we're currently streaming
-    // video from the camera. Obviously, we start at false.
+ 
+    var width = 720;    
+    var height = 0;   
   
     var streaming = false;
-  
-    // The various HTML elements we need to configure or control. These
-    // will be set by the startup() function.
   
     var video = null;
     var canvas = null;
@@ -28,7 +17,6 @@
       canvas = document.getElementById('canvas');
       photo = document.getElementById('photo');
       startbutton = document.getElementById('startbutton');
-      pausebutton = document.getElementById('pausebutton');
       stopbutton = document.getElementById('stopbutton');
 
       const constraints = {
@@ -57,9 +45,6 @@
           if (!streaming) {
             height = video.videoHeight / (video.videoWidth/width);
           
-            // Firefox currently has a bug where the height can't be read from
-            // the video, so we will make assumptions if this happens.
-          
             if (isNaN(height)) {
               height = width / (4/3);
             }
@@ -72,9 +57,6 @@
           }
         }, false);
     
-        // startVideo();
-
-        // gameOneSet();
         stretchingGame();
 
         clearphoto();
@@ -89,7 +71,6 @@
       video.play();
       streamingStatus = true;
       jQuery("#bigcount").hide();
-      // sendImg = setInterval(sendImage, 3000);
     }
 
     function stopVideo() {
@@ -102,11 +83,6 @@
       }
     }
 
-
-  
-    // Fill the photo with an indication that none has been
-    // captured.
-  
     function clearphoto() {
       var context = canvas.getContext('2d');
       context.fillStyle = "#AAA";
@@ -124,8 +100,7 @@
       var context = canvas.getContext('2d');
       canvas.width = width;
       canvas.height = height;
-      // console.log(width);
-      // console.log(height);
+
       context.translate(video.width, 0);
       context.scale(-1, 1);
       context.drawImage(video, 0, 0, width, height);
@@ -136,37 +111,25 @@
       canvas.toBlob(blob => {
         const jpegBlob = new Blob([blob], { type: 'image/png' });
         const fileName = 'canvas_img_' + new Date().getMilliseconds() + '.png';
-        // const formData = new FormData();
-        // formData.append('camera-image', blob);
+ 
         var data = new FormData($('form')[0]);
-        // var picdata = canvas.toDataURL('image/png');
         data.append("img_file", jpegBlob, fileName);
-        console.log('form에 이미지 추가');
-
         
 
         $.ajax({
           type : "POST",
           url : "/service/send_image_game/", // 통신할 url을 지정
-          // enctype : "multipart/form-data",
           processData : false,
           contentType : false,
           data: data,
           datatype: 'json',
           success: function (data) {
-            // console.log(data);
-            console.log('success');
-            console.log('stretching : '+data['class_name']);
-            // jQuery("#posture-status").html(Number(data['class_name'])); // #########
             if (jQuery("#posture-status").html()==data['class_name']) {
-              // $('#stretchingStatus').html('O');
               answer.push(1);
             }
             else {
-              // $('#stretchingStatus').html('X');
               answer.push(0);
             }
-            console.log("현재 정답 : "+answer);
           },
           error: function(e){
             console.log('error');
@@ -239,21 +202,6 @@ function BIGTIMER(time, min, sec){
       });
     }
 
-    //10초에 사용하는 함수 => myTimerWithProgressBar로 대체
-    // function myTimer2(sen, time, m, s) {
-    //   return new Promise(resolve => {
-    //     jQuery("#count").html(s);
-    //     jQuery("#subscription").html(sen);
-    //     TIMER(time,m,s);
-    //     var sendimg = setInterval(sendImage, 1000); //
-    //     setTimeout(() => {
-    //       clearInterval(sendimg); //
-    //       clearInterval(PLAYTIME);
-    //       resolve();
-    //   }, time);
-    //   });
-    // }
-    
     //------------10초에 사용하는 함수
     //------------- myTimer2 수정(progressbar 포함 & sendimg)
     function myTimerWithProgressBar(sen, time, m, s) {
@@ -291,8 +239,6 @@ function BIGTIMER(time, min, sec){
     }
     
 
-
-
     //--------------------------------------------------------
     function mySendImage(){
       return new Promise(resolve => {
@@ -307,8 +253,6 @@ function BIGTIMER(time, min, sec){
           startVideo();
           resolve();
       }, 700);
-        // startVideo();
-        // resolve();
       });
     }
 
@@ -337,14 +281,11 @@ function BIGTIMER(time, min, sec){
 
     function myAnswer() {
       return new Promise(resolve => {
-        console.log('최종 answer : '+answer);
         if(answer.indexOf(1)==-1){
-          console.log('실패');
           $('#stretchingStatus').html('X');
           stretchingAgain = true;
         } else if (answer.indexOf(1)>=0){
           stretchingAgain = false;
-          console.log('성공');
           $('#stretchingStatus').html('O');
         }
         resolve();
@@ -357,45 +298,17 @@ function BIGTIMER(time, min, sec){
 
     async function stretchingGame(){
       await myTimer('5초 뒤에 스트레칭이 시작됩니다.', 5000, 0, 5);
-      console.log('5초 타이머');
       await myStartVideo();
-      console.log('비디오 시작');
       await myTimerWithProgressBar('왼쪽의 동작을 10초 동안 따라해주세요.', 10000, 0, 10);
-      console.log('10초 타이머');
       await myAnswer();
-      console.log('정답 호출');
       while(stretchingAgain){
         await tryAgain();
         await sleep(1500);
         await myTimerWithProgressBar('왼쪽의 동작을 10초 동안 다시 따라해주세요.', 10000, 0, 10);
-        console.log('10초 타이머 재시작');
         await myAnswer();
       }
       await myStopVideo();
     }
 
-
-    // //시간 경과 이벤트 함수 => stretchingGame() 으로 대체
-    // function gameOneSet(){
-    //   myTimer('5초 뒤에 스트레칭이 시작됩니다.', 5000, 0, 5)
-    //     .then(() => {
-    //       return myStartVideo();
-    //     })
-    //     .then(() => {
-    //       return myTimerWithProgressBar('왼쪽의 동작을 10초 안에 따라해주세요.', 10000, 0, 10);
-    //     })
-    //     .then(() => {
-    //       return console.log('끝끝');
-    //     });
-    // }
-
-
-    
-
-
-// var imageSrc = $("#previewImage").attr("src");
-  
-    // Set up our event listener to run the startup process
-    // once loading is complete. // 위치 중요 (가장 마지막단)
     window.addEventListener('load', startup, false);
 

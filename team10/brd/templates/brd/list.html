@@ -4,12 +4,22 @@
 {% block title %}바른자세 게시판{% endblock title %}
 {% block content %}
 <!--새 글 쓰기 및 검색하기-->
-<form action="" method='get'>
-	{% csrf_token %}
-	<br>
-	검색어 : <input type='text' name='keyword' value='{{q|default:""}}'>
-	<br>
-	<input type='submit' value='검색'>
+<form action="{% url 'brd:list' %}" method="get">
+    {% csrf_token %}
+    <br>
+    검색어 : <input type='text' name='keyword' value='{{request.GET.keyword|default:""}}'>
+    <br>
+    <input type='submit' value='검색'>
+	<div id="list-section">
+		<!-- 여기에 서버에서 가져온 목록 항목들이 들어갑니다. -->
+		<ul>
+			{% for post in posts %}
+			<li>{{ forloop.counter }}. <a href='/brd/{{ post.id }}'>{{ post.title }}</a></li>
+			{% empty %}
+			<li>검색 결과가 없습니다.</li>
+			{% endfor %}
+		</ul>
+	</div>
 </form>
 <p align='right'><a href='{% url "brd:create" %}' class="new-post-button">새 글 쓰기</a></p>
 <style>
@@ -232,6 +242,27 @@
 				function goToPage(direction) {
 					// 페이징 로직을 추가하세요. 예: AJAX를 사용하여 페이지를 로드
 				}
+				document.querySelector('form').addEventListener('submit', function(event) {
+					event.preventDefault(); // 폼의 기본 제출 동작을 방지
+					var keyword = this.keyword.value; // 검색어 가져오기
+				
+					// AJAX 요청을 서버로 보내기
+					fetch(`search/?keyword=${keyword}`)  // 상대 경로를 사용합니다.
+					  .then(response => response.json())  // JSON으로 응답을 기대하고 있으므로 response.json()을 호출합니다.
+					  .then(data => {
+						// 검색 결과로 받은 데이터를 현재 페이지에 있는 목록 섹션에 삽입
+						const listSection = document.querySelector('#list-section');
+						listSection.innerHTML = ''; // 목록 섹션을 비웁니다.
+						data.results.forEach(post => {
+						  const li = document.createElement('li');
+						  li.textContent = post.title; // 각 게시글의 제목을 li 요소에 추가합니다.
+						  listSection.appendChild(li);
+						});
+					  })
+					  .catch(error => {
+						console.error('Error:', error);
+					  });
+				});
 			</script>					
 		</article>
 	</div>

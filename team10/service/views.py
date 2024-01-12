@@ -1,11 +1,8 @@
 # service/views.py
 
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
-from .models import CameraImage
 
 from .models import PostureDetection
-from django.http import FileResponse
 from django.http import JsonResponse
 import cv2
 import mediapipe as mp
@@ -43,63 +40,24 @@ mlflow.set_tracking_uri(mlflow_path)
 # stretching_model = mlflow.sklearn.load_model(model_uri_stretch)
     
 model_path = os.path.join(os.getcwd(), 'service\pose_classification_model.pkl')
-pose_model = joblib.load(model_path) # 여기 삭제하고 특정 이벤트 발생시 모델을 로드하도록.
+pose_model = joblib.load(model_path) 
 
 stretching_model_path = os.path.join(os.getcwd(), 'service\pose_classification_model_stretch_final.pkl')
-stretching_model = joblib.load(stretching_model_path) # 여기 삭제하고 특정 이벤트 발생시 모델을 로드하도록.
+stretching_model = joblib.load(stretching_model_path) 
 
 
-#임시로 만들었습니다
-def model(request):
-    return render(request, 'service/model.html')
 def service(request):
     return render(request, 'service/service.html')
-
-
-# def statistics(request):
-#     return render(request, 'service/statistics.html')
-
 
 def game(request):
     return render(request, 'service/game.html')
 
-
-# def test2(request):
-#     if request.method == 'POST':
-#         image = request.FILES.get('camera-image')
-#         CameraImage.objects.create(image=image)
-#     images = CameraImage.objects.all()
-#     context = {
-#         'images':images
-#     }
-#     return render(request, 'service/service.html', context)
-
-def upload(request):
-    if request.method == 'POST' and request.FILES['files']:
-        image = request.FILES.get('camera-image')
-        CameraImage.objects.create(image=image)
-    images = CameraImage.objects.all()
-    context = {
-        'images':images
-    }
-    return render(request, 'service/service.html', context)
-
-
-
-# num = 0
-
-# def send_image(request):
-#     if request.method == 'POST':
-#         image_file = request.FILES.get('img_file')
-#         return FileResponse(image_file, content_type='image/png')
         
 @login_required(login_url='accounts:login')
 def send_image(request):
     if request.method == 'POST':
         image_file = request.FILES.get('img_file')
         mp_holistic = mp.solutions.holistic
-        # model_path = os.path.join(os.getcwd(), 'service\pose_classification_model.pkl')
-        # model = joblib.load(model_path) # 여기 삭제하고 특정 이벤트 발생시 모델을 로드하도록.
         display_text = "Waiting..."
  
         with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
@@ -171,13 +129,6 @@ def send_image(request):
                     print("현재 시간 : ", now_hms)
                     PostureDetection.objects.create(user=request.user, timeymd=now_ymd, timehms=now_hms, posturetype=class_name)
 
-                    # if class_name == 0:
-                    #     message = "good posture"
-                    # else:
-                    #     message = 'bad posture'
-                   
-                    # 자세 정보 업데이트
-                    # display_text = f'Pose: {message}'
                 else:
                     # 가시성이 낮을 때는 대기 메시지 표시
                     class_name = -1
@@ -185,9 +136,6 @@ def send_image(request):
                     now_hms = datetime.now().strftime('%H:%M:%S')
                     PostureDetection.objects.create(user=request.user, timeymd=now_ymd, timehms=now_hms, posturetype=class_name)
 
-                # processed_image_path = "./media/processed_image.png"
-                # cv2.imwrite(processed_image_path, frame)  # 이미지 저장
-        # return FileResponse(open(processed_image_path, 'rb'), content_type='image/png')
                 context = {'class_name':str(class_name)}
         return JsonResponse(context)
     
@@ -196,8 +144,6 @@ def send_image_game(request):
     if request.method == 'POST':
         image_file = request.FILES.get('img_file')
         mp_holistic = mp.solutions.holistic
-        # model_path = os.path.join(os.getcwd(), 'service\pose_classification_model.pkl')
-        # model = joblib.load(model_path) # 여기 삭제하고 특정 이벤트 발생시 모델을 로드하도록.
         display_text = "Waiting..."
  
         with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
@@ -260,47 +206,20 @@ def send_image_game(request):
  
                     # 자세 예측
                     prediction = stretching_model.predict(row_df)
-                    class_name = prediction[0] # 여기를 DB로 넘김
-                    print("클래스 : ", class_name)
+                    class_name = prediction[0]
                 
                     now_ymd = datetime.now().strftime('%Y.%m.%d')
                     now_hms = datetime.now().strftime('%H:%M:%S')
-                    print("오늘 날짜 : ", now_ymd)
-                    print("현재 시간 : ", now_hms)
-                    # PostureDetection.objects.create(user=request.user, timeymd=now_ymd, timehms=now_hms, posturetype=class_name)
 
-                    # if class_name == 0:
-                    #     message = "good posture"
-                    # else:
-                    #     message = 'bad posture'
-                   
-                    # 자세 정보 업데이트
-                    # display_text = f'Pose: {message}'
                 else:
                     # 가시성이 낮을 때는 대기 메시지 표시
                     class_name = -1
                     now_ymd = datetime.now().strftime('%Y.%m.%d')
                     now_hms = datetime.now().strftime('%H:%M:%S')
-                    # PostureDetection.objects.create(user=request.user, timeymd=now_ymd, timehms=now_hms, posturetype=class_name)
 
-        #         processed_image_path = "./media/processed_image.png"
-        #         cv2.imwrite(processed_image_path, frame)  # 이미지 저장
-        # return FileResponse(open(processed_image_path, 'rb'), content_type='image/png')
-                print('user id: ', request.user.id)
                 context = {'class_name':str(class_name)}
         return JsonResponse(context)
 
-
-from datetime import datetime
-
-# def get_statistics(dataquery, targetdate):
-#     # dataquery : 특정 user의 PostureDetection 데이터 쿼리 전체
-#     # targetdate : 조회 날짜 - 아마 당일로 설정할 듯. 
-#     todaysposes = dataquery.filter(timeymd=targetdate)
-#     today = time.strftime('%Y.%m.%d')
-#     todaystotal = todaysposes.count()
-
-#     today_obj = datetime.strptime(today, '%Y.%m.%d')
 
 
 @login_required(login_url='accounts:login')
@@ -353,6 +272,9 @@ def statistics(request):
     badWeek = ','.join(badWeek)
     weekDate = ','.join(weekDate)
     
+    # 오늘 총 이용 시간
+    totalUsageTime = round((todayposecnt / 1200), 2)
+    
 
     context = {
         # 'posture_type_num':posture_type_cnt,
@@ -370,6 +292,7 @@ def statistics(request):
         'correct_week' : correctWeek,
         'bad_week' : badWeek,
         'week_date' : weekDate,
+        'today_usage_t' : totalUsageTime,
     }
     return render(request, 'service/statistics.html', context)
 
