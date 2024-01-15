@@ -10,3 +10,11 @@ def home_view(request):
 def intro(request):
     return render(request, 'home/intro.html')
 
+def privacy_policy(request):
+    return render(request, 'home/privacy_policy.html')
+
+def terms_of_service(request):
+    return render(request, 'home/terms_of_service.html')
+
+def data_policy(request):
+    return render(request, 'home/data_policy.html')

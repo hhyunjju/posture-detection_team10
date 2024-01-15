@@ -3,40 +3,267 @@
 
 {% block title %}바른자세 게시판{% endblock title %}
 {% block content %}
+<!--새 글 쓰기 및 검색하기-->
+<form action="{% url 'brd:list' %}" method="get">
+    {% csrf_token %}
+    <br>
+    검색어 : <input type='text' name='keyword' value='{{request.GET.keyword|default:""}}'>
+    <br>
+    <input type='submit' value='검색'>
+	<div id="list-section">
+		<!-- 여기에 서버에서 가져온 목록 항목들이 들어갑니다. -->
+		<ul>
+			{% for post in posts %}
+			<li>{{ forloop.counter }}. <a href='/brd/{{ post.id }}'>{{ post.title }}</a></li>
+			{% empty %}
+			<li>검색 결과가 없습니다.</li>
+			{% endfor %}
+		</ul>
+	</div>
+</form>
+<p align='right'><a href='{% url "brd:create" %}' class="new-post-button">새 글 쓰기</a></p>
+<style>
+	.new-post-button {
+		display: inline-block;
+		padding: 10px 15px;
+		background-color: #4CAF50; /* 버튼 색상 */
+		color: white; /* 텍스트 색상 */
+		text-decoration: none; /* 밑줄 없애기 */
+		border-radius: 5px; /* 둥근 모서리 */
+		font-weight: bold; /* 글씨 굵게 */
+		transition: background-color 0.3s; /* 호버 효과 */
+	}
+	
+	.new-post-button:hover {
+		background-color: #45a049; /* 호버 시 색상 변경 */
+	}
+</style>
 <!-- Main -->
-	<div id="main">
-		<!-- Post -->
-			<article class="post">
-				
-				<h1>Post 목록</h1>
-					<form action="" method='get'>
-						{% csrf_token %}
-						<br>
-						검색어 : <input type='text' name='keyword' value='{{q|default:""}}'>
-						<br>
-						<input type='submit' value='검색'>
-					</form>
+<div id="main">
+	<!-- Post -->
+		<article class="post">
+			<div id="tab-container">
+				<!-- 탭 메뉴 -->
+				<div class="tab-menu">
+					<div class="tab" data-target="notice-section" onclick="showContent('notice')">사용방법</div>
+					<div class="tab" data-target="faq-section" onclick="showContent('faq')">FAQ</div>
+				</div>
 
-					{% for post in post_all %}
-						- <a href='/brd/{{post.id}}'>{{post.title}}</a><br>
-					{% endfor %}
-					<p align='right'><a href='{% url "brd:create" %}' class="new-post-button">새 글 쓰기</a></p>
-					<style>
-						.new-post-button {
-							display: inline-block;
-							padding: 10px 15px;
-							background-color: #4CAF50; /* 버튼 색상 */
-							color: white; /* 텍스트 색상 */
-							text-decoration: none; /* 밑줄 없애기 */
-							border-radius: 5px; /* 둥근 모서리 */
-							font-weight: bold; /* 글씨 굵게 */
-							transition: background-color 0.3s; /* 호버 효과 */
-						}
-						
-						.new-post-button:hover {
-							background-color: #45a049; /* 호버 시 색상 변경 */
-						}
-					</style>
-			</article>
+				<!-- 공지사항 섹션 -->
+				<div id="notice-section" class="content">
+					<!-- 여기에 서버에서 가져온 공지사항 항목들이 들어갑니다. -->
+					<p>1. 일일 통계 결과지를 새 글 쓰기를 통해 업로드 하세요</p>
+					<p>2. 다른 사람들의 자세에 대해 확인하고 질문해보세요. 댓글 작성이 가능합니다.</p>
+					<p>3. 서로 소통하면서 꿀팁을 공유해보세요!</p>
+				</div>
+
+				<!-- FAQ 섹션 -->
+				<div id="faq-section" class="content">
+					<!-- 여기에 서버에서 가져온 FAQ 항목들이 들어갑니다. -->
+					<ul>
+						<p>Q 바른 자세 모니터링은 어떤 서비스인가요?</p>
+						<p>Q 통계 페이지는 어떻게 해석 하나요?</p>	
+						<p>Q 카메라가 안 켜져요?</p>
+						<p>Q 스트레칭에서 방법을 잘 모르겠어요?</p>
+						<p>Q 게시물 작성하는 법을 모르겠어요?</p>
+						<p>Q 로그인을 해야 서비스 이용이 가능한가요?</p>
+						<p>Q 제 개인 사진이나 영상이 저장되는 건가요?</p>
+						<p>Q 파일 업로드해서 어떻게 사용하나요?</p>
+					</ul>
+				</div>
+
+				<!-- 목록 리스트 섹션, 탭 아래 항상 표시 -->
+				<div id="list-section">
+					<!-- 여기에 서버에서 가져온 목록 항목들이 들어갑니다. -->
+					<ul>
+						{% for post in post_all %}
+						<li>{{ forloop.counter }}. <a href='/brd/{{ post.id }}'>{{ post.title }}</a></li>
+						{% endfor %}
+					</ul>
+					
+					 <!-- 페이징 -->
+					 <div class="page">
+						<ul class="pagination modal">
+							{% if posts.has_previous %}
+								<li><a href="?page=1" class="first">처음</a></li>
+								<li><a href="?page={{ posts.previous_page_number }}" class="arrow left"><<</a></li>
+							{% endif %}
+				
+							{% for num in posts.paginator.page_range %}
+								{% if posts.number == num %}
+									<li><a href="?page={{ num }}" class="active">{{ num }}</a></li>
+								{% else %}
+									<li><a href="?page={{ num }}">{{ num }}</a></li>
+								{% endif %}
+							{% endfor %}
+				
+							{% if posts.has_next %}
+								<li><a href="?page={{ posts.next_page_number }}" class="arrow right">>></a></li>
+								<li><a href="?page={{ posts.paginator.num_pages }}" class="last">마지막</a></li>
+							{% endif %}
+						</ul>
+					</div>
+				</div>
+			<style>
+				body {
+					font-family: Arial, sans-serif;
+					margin: 0;
+					padding: 0;
+					background-color: #f5f5f5;
+				}
+				.search-and-create {
+					text-align: right;
+					margin-bottom: 20px;
+				}
+				.tab-menu {
+					display: flex;
+					justify-content: space-around; /* 탭 간격을 균등하게 설정 */
+					margin: 0 auto; /* 가운데 정렬 */
+					max-width: auto; /* 탭 메뉴의 최대 너비를 설정 */
+				}
+				.tab {
+					flex-grow: 1; /* 각 탭이 사용 가능한 공간을 균등하게 차지하도록 설정 */
+					text-align: center; /* 탭 내 텍스트를 가운데 정렬 */
+					padding: 10px 0; /* 탭의 상하 패딩 설정 */
+					cursor: pointer;
+					border: 1px solid #ddd;
+					margin: 0 5px; /* 탭 사이의 마진 설정 */
+					background-color: #f9f9f9;
+					transition: background-color 0.3s; /* 배경색 변경시 트랜지션 효과 적용 */
+				}
+				.tab:hover, .tab.active {
+					background-color: #2ebaae; /* 호버 혹은 활성 탭의 배경색 */
+					color: white; /* 호버 혹은 활성 탭의 텍스트 색상 */
+				}
+				.tab.active {
+					background-color: #2ebaae;
+				}
+				.tab-contents > .content {
+					display: none;
+					/* 스타일 설정은 여기에 유지 */
+				}
+				.content {
+					width: 100%;
+					margin: 20px auto;
+					padding: 20px;
+					border: 1px solid #ddd;
+					background-color: #fff;
+					display: none;
+				}
+				.content.active {
+					display: block;
+				}
+				.pagination {
+					text-align: center;
+					margin-top: 20px;
+				}
+				.pagination span {
+					margin: 0 5px;
+					padding: 5px 10px;
+					border: 1px solid #ccc;
+					cursor: pointer;
+				}
+				.pagination li {
+					display: inline;
+				}
+				
+				.pagination li a {
+					text-decoration: none;
+					padding: 5px 10px;
+					border: 1px solid #ddd;
+					margin: 2px;
+				}
+				
+				.pagination li a.first, 
+				.pagination li a.last, 
+				.pagination li a.arrow {
+					background-color: #f4f4f4;
+				}
+				
+				.pagination li a.active {
+					background-color: #007bff;
+					color: white;
+				}
+				.new-post-button {
+					display: inline-block;
+					padding: 10px 15px;
+					background-color: #2ebaae;
+					color: white;
+					text-decoration: none;
+					border-radius: 5px;
+					font-weight: bold;
+					transition: background-color 0.3s;
+				}
+				.new-post-button:hover {
+					background-color: #2ebaae;
+					color:white !important;
+				}
+			</style>
+			<script>
+				window.onload = function() {
+					// 탭 클릭 이벤트 핸들러
+					document.querySelectorAll('.tab').forEach(function(tab) {
+						tab.addEventListener('click', function() {
+							var currentContent = document.getElementById(tab.getAttribute('data-target'));
+							if (currentContent.classList.contains('active')) {
+								// 현재 활성화된 탭을 다시 클릭하면 섹션을 숨깁니다.
+								currentContent.classList.remove('active');
+								currentContent.style.display = 'none';
+								tab.classList.remove('active');
+							} else {
+								// 모든 탭의 'active' 클래스 제거
+								document.querySelectorAll('.tab').forEach(function(otherTab) {
+									otherTab.classList.remove('active');
+								});
+				
+								// 모든 섹션을 숨기고
+								document.querySelectorAll('.content').forEach(function(section) {
+									section.style.display = 'none';
+									section.classList.remove('active');
+								});
+				
+								// 클릭된 탭에 'active' 클래스 추가
+								tab.classList.add('active');
+								currentContent.classList.add('active');
+								currentContent.style.display = 'block';
+							}
+						});
+					});
+				};
+				
+				function showContent(contentId) {
+					var content = document.getElementById(contentId);
+					if (content.style.display === 'block') {
+						content.style.display = 'none';
+					} else {
+						content.style.display = 'block';
+					}
+				}
+				function goToPage(direction) {
+					// 페이징 로직을 추가하세요. 예: AJAX를 사용하여 페이지를 로드
+				}
+				document.querySelector('form').addEventListener('submit', function(event) {
+					event.preventDefault(); // 폼의 기본 제출 동작을 방지
+					var keyword = this.keyword.value; // 검색어 가져오기
+				
+					// AJAX 요청을 서버로 보내기
+					fetch(`search/?keyword=${keyword}`)  // 상대 경로를 사용합니다.
+					  .then(response => response.json())  // JSON으로 응답을 기대하고 있으므로 response.json()을 호출합니다.
+					  .then(data => {
+						// 검색 결과로 받은 데이터를 현재 페이지에 있는 목록 섹션에 삽입
+						const listSection = document.querySelector('#list-section');
+						listSection.innerHTML = ''; // 목록 섹션을 비웁니다.
+						data.results.forEach(post => {
+						  const li = document.createElement('li');
+						  li.textContent = post.title; // 각 게시글의 제목을 li 요소에 추가합니다.
+						  listSection.appendChild(li);
+						});
+					  })
+					  .catch(error => {
+						console.error('Error:', error);
+					  });
+				});
+			</script>					
+		</article>
 	</div>
 {% endblock content %}

@@ -1,11 +1,8 @@
 # service/views.py
 
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
-from .models import CameraImage
 
 from .models import PostureDetection
-from django.http import FileResponse
 from django.http import JsonResponse
 import cv2
 import mediapipe as mp
@@ -14,69 +11,53 @@ import numpy as np
 import pandas as pd
 from .preprocessing import calculate_angle, calculate_distance, selected_landmarks, landmark_description, stretching_selected_landmarks
 import os
-import time
+# import mlflow
+from datetime import datetime, timedelta
+import mlflow
 
 from django.contrib.auth.decorators import login_required
 
+# MLflow Tracking URI 설정
+# mlflow.set_tracking_uri("C:\\Users\\user\\TEAM10\\team10\\team10\\service\\mlruns")
+mlflow_path = os.path.join(os.getcwd(), 'service\mlruns')
+mlflow_path = "file:\\"+mlflow_path
+mlflow.set_tracking_uri(mlflow_path)
 
+# # 포즈 run ID와 모델 이름 설정
+# run_id_pose = "6b8c4018707341eca7bf4e57438cc697"
+# model_name_pose = "model_pose_final"
+
+# # 포즈 모델을 불러오는 코드
+# model_uri_pose = f"runs:/{run_id_pose}/{model_name_pose}"
+# pose_model = mlflow.sklearn.load_model(model_uri_pose)
+
+# # 스트레칭 run ID와 모델 이름 설정
+# run_id_stretch = "6b8c4018707341eca7bf4e57438cc697"
+# model_name_stretch = "model_stretch_final"
+
+# # 스트레칭 모델을 불러오는 코드
+# model_uri_stretch = f"runs:/{run_id_stretch}/{model_name_stretch}"
+# stretching_model = mlflow.sklearn.load_model(model_uri_stretch)
+    
 model_path = os.path.join(os.getcwd(), 'service\pose_classification_model.pkl')
-pose_model = joblib.load(model_path) # 여기 삭제하고 특정 이벤트 발생시 모델을 로드하도록.
+pose_model = joblib.load(model_path) 
 
 stretching_model_path = os.path.join(os.getcwd(), 'service\pose_classification_model_stretch_final.pkl')
-stretching_model = joblib.load(stretching_model_path) # 여기 삭제하고 특정 이벤트 발생시 모델을 로드하도록.
+stretching_model = joblib.load(stretching_model_path) 
 
 
-#임시로 만들었습니다
-def model(request):
-    return render(request, 'service/model.html')
 def service(request):
     return render(request, 'service/service.html')
-
-
-# def statistics(request):
-#     return render(request, 'service/statistics.html')
-
 
 def game(request):
     return render(request, 'service/game.html')
 
-
-# def test2(request):
-#     if request.method == 'POST':
-#         image = request.FILES.get('camera-image')
-#         CameraImage.objects.create(image=image)
-#     images = CameraImage.objects.all()
-#     context = {
-#         'images':images
-#     }
-#     return render(request, 'service/service.html', context)
-
-def upload(request):
-    if request.method == 'POST' and request.FILES['files']:
-        image = request.FILES.get('camera-image')
-        CameraImage.objects.create(image=image)
-    images = CameraImage.objects.all()
-    context = {
-        'images':images
-    }
-    return render(request, 'service/service.html', context)
-
-
-
-# num = 0
-
-# def send_image(request):
-#     if request.method == 'POST':
-#         image_file = request.FILES.get('img_file')
-#         return FileResponse(image_file, content_type='image/png')
         
 @login_required(login_url='accounts:login')
 def send_image(request):
     if request.method == 'POST':
         image_file = request.FILES.get('img_file')
         mp_holistic = mp.solutions.holistic
-        # model_path = os.path.join(os.getcwd(), 'service\pose_classification_model.pkl')
-        # model = joblib.load(model_path) # 여기 삭제하고 특정 이벤트 발생시 모델을 로드하도록.
         display_text = "Waiting..."
  
         with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
@@ -142,29 +123,19 @@ def send_image(request):
                     class_name = prediction[0] # 여기를 DB로 넘김
                     print("클래스 : ", class_name)
                 
-                    now_ymd = time.strftime('%Y.%m.%d')
-                    now_hms = time.strftime('%H:%M:%S')
+                    now_ymd = datetime.now().strftime('%Y.%m.%d')
+                    now_hms = datetime.now().strftime('%H:%M:%S')
                     print("오늘 날짜 : ", now_ymd)
                     print("현재 시간 : ", now_hms)
                     PostureDetection.objects.create(user=request.user, timeymd=now_ymd, timehms=now_hms, posturetype=class_name)
 
-                    # if class_name == 0:
-                    #     message = "good posture"
-                    # else:
-                    #     message = 'bad posture'
-                   
-                    # 자세 정보 업데이트
-                    # display_text = f'Pose: {message}'
                 else:
                     # 가시성이 낮을 때는 대기 메시지 표시
                     class_name = -1
-                    now_ymd = time.strftime('%Y.%m.%d')
-                    now_hms = time.strftime('%H:%M:%S')
+                    now_ymd = datetime.now().strftime('%Y.%m.%d')
+                    now_hms = datetime.now().strftime('%H:%M:%S')
                     PostureDetection.objects.create(user=request.user, timeymd=now_ymd, timehms=now_hms, posturetype=class_name)
 
-                # processed_image_path = "./media/processed_image.png"
-                # cv2.imwrite(processed_image_path, frame)  # 이미지 저장
-        # return FileResponse(open(processed_image_path, 'rb'), content_type='image/png')
                 context = {'class_name':str(class_name)}
         return JsonResponse(context)
     
@@ -173,8 +144,6 @@ def send_image_game(request):
     if request.method == 'POST':
         image_file = request.FILES.get('img_file')
         mp_holistic = mp.solutions.holistic
-        # model_path = os.path.join(os.getcwd(), 'service\pose_classification_model.pkl')
-        # model = joblib.load(model_path) # 여기 삭제하고 특정 이벤트 발생시 모델을 로드하도록.
         display_text = "Waiting..."
  
         with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
@@ -237,47 +206,20 @@ def send_image_game(request):
  
                     # 자세 예측
                     prediction = stretching_model.predict(row_df)
-                    class_name = prediction[0] # 여기를 DB로 넘김
-                    print("클래스 : ", class_name)
+                    class_name = prediction[0]
                 
-                    now_ymd = time.strftime('%Y.%m.%d')
-                    now_hms = time.strftime('%H:%M:%S')
-                    print("오늘 날짜 : ", now_ymd)
-                    print("현재 시간 : ", now_hms)
-                    # PostureDetection.objects.create(user=request.user, timeymd=now_ymd, timehms=now_hms, posturetype=class_name)
+                    now_ymd = datetime.now().strftime('%Y.%m.%d')
+                    now_hms = datetime.now().strftime('%H:%M:%S')
 
-                    # if class_name == 0:
-                    #     message = "good posture"
-                    # else:
-                    #     message = 'bad posture'
-                   
-                    # 자세 정보 업데이트
-                    # display_text = f'Pose: {message}'
                 else:
                     # 가시성이 낮을 때는 대기 메시지 표시
                     class_name = -1
-                    now_ymd = time.strftime('%Y.%m.%d')
-                    now_hms = time.strftime('%H:%M:%S')
-                    # PostureDetection.objects.create(user=request.user, timeymd=now_ymd, timehms=now_hms, posturetype=class_name)
+                    now_ymd = datetime.now().strftime('%Y.%m.%d')
+                    now_hms = datetime.now().strftime('%H:%M:%S')
 
-        #         processed_image_path = "./media/processed_image.png"
-        #         cv2.imwrite(processed_image_path, frame)  # 이미지 저장
-        # return FileResponse(open(processed_image_path, 'rb'), content_type='image/png')
-                print('user id: ', request.user.id)
                 context = {'class_name':str(class_name)}
         return JsonResponse(context)
 
-
-from datetime import datetime
-
-# def get_statistics(dataquery, targetdate):
-#     # dataquery : 특정 user의 PostureDetection 데이터 쿼리 전체
-#     # targetdate : 조회 날짜 - 아마 당일로 설정할 듯. 
-#     todaysposes = dataquery.filter(timeymd=targetdate)
-#     today = time.strftime('%Y.%m.%d')
-#     todaystotal = todaysposes.count()
-
-#     today_obj = datetime.strptime(today, '%Y.%m.%d')
 
 
 @login_required(login_url='accounts:login')
@@ -286,7 +228,7 @@ def statistics(request):
     # 해당 유저의 자세 데이터 전체
     userdata = PostureDetection.objects.filter(user_id=request.user)
     # 오늘 날짜
-    today = time.strftime('%Y.%m.%d')
+    today = datetime.now().strftime('%Y.%m.%d')
     # 오늘 날짜에 해당되는 데이터 전체
     todaysposes = userdata.filter(timeymd=today)
     todayposecnt = todaysposes.count()
@@ -295,10 +237,6 @@ def statistics(request):
     correctposecnt = todaysposes.filter(posturetype=0).count()
     # 나쁜 자세 데이터 수
     badposecnt = todaysposes.exclude(posturetype=0).count()
-    
-    # 자세 종류 개수
-    # posture_type_cnt = ?
-    
     
     # 자리에 있었던 데이터 수
     inplacecnt = todaysposes.exclude(posturetype=-1).count()
@@ -316,43 +254,27 @@ def statistics(request):
         incorrect_posture_ratio = 0
         person_in_place_ratio = 0
         person_missed_place_ratio = 0
-    try:
-        correct_posture_ratio = round((correctposecnt / todayposecnt), 2)
-        incorrect_posture_ratio = round((badposecnt / todayposecnt), 2)
-        person_in_place_ratio = round((inplacecnt / todayposecnt), 2)
-        person_missed_place_ratio = round((missedplacecnt / todayposecnt), 2)
-    except ZeroDivisionError:
-        correct_posture_ratio = 0
-        incorrect_posture_ratio = 0
-        person_in_place_ratio = 0
-        person_missed_place_ratio = 0
-    # 
-    userdata = PostureDetection.objects.filter(user_id=request.user)
-    today = time.strftime('%Y.%m.%d')
-    todaysposes = userdata.filter(timeymd=today)
-    todayposecnt = todaysposes.count()
-
-    correctposecnt = todaysposes.filter(posturetype=0).count()
-    badposecnt = todaysposes.exclude(posturetype=0).count()
-    inplacecnt = todaysposes.exclude(posturetype=-1).count()
-    missedplacecnt = todaysposes.filter(posturetype=-1).count()
-
-    # 오류를 피하기 위해 todayposecnt가 0보다 큰 경우에만 나눗셈을 수행합니다.
-    if todayposecnt > 0:
-        correct_posture_ratio = round((correctposecnt / todayposecnt), 2)
-        incorrect_posture_ratio = round((badposecnt / todayposecnt), 2)
-        person_in_place_ratio = round((inplacecnt / todayposecnt), 2)
-        person_missed_place_ratio = round((missedplacecnt / todayposecnt), 2)
-    else:
-        correct_posture_ratio = 0
-        incorrect_posture_ratio = 0
-        person_in_place_ratio = 0
-        person_missed_place_ratio = 0
-        # Count for each posture type
+    
+    # Count for each posture type
     posture1_cnt = todaysposes.filter(posturetype=1).count()
     posture2_cnt = todaysposes.filter(posturetype=2).count()
     posture3_cnt = todaysposes.filter(posturetype=3).count()
     posture4_cnt = todaysposes.filter(posturetype=4).count()
+    
+    
+    # 오늘 기준 지난 일주일 데이터
+    correctWeek, badWeek, weekDate = weekData(userdata)
+    correctWeek = list(map(str, correctWeek))
+    badWeek = list(map(str, badWeek))
+    
+    # 리스트 - 문자열 변환
+    correctWeek = ','.join(correctWeek)
+    badWeek = ','.join(badWeek)
+    weekDate = ','.join(weekDate)
+    
+    # 오늘 총 이용 시간
+    totalUsageTime = round((todayposecnt / 1200), 2)
+    
 
     context = {
         # 'posture_type_num':posture_type_cnt,
@@ -367,6 +289,10 @@ def statistics(request):
         'posture2_cnt': posture2_cnt,
         'posture3_cnt': posture3_cnt,
         'posture4_cnt': posture4_cnt,
+        'correct_week' : correctWeek,
+        'bad_week' : badWeek,
+        'week_date' : weekDate,
+        'today_usage_t' : totalUsageTime,
     }
     return render(request, 'service/statistics.html', context)
 
@@ -374,3 +300,36 @@ def statistics(request):
     
 def test(request):
     return render(request, 'service/test.html')
+
+def weekData(data):
+    # today = datetime.now().strftime('%Y.%m.%d')
+    today = datetime.now()
+    badWeek = []
+    correctWeek = []
+    weekDate = []
+    for i in range(0, 7):
+        day = today - timedelta(days=i) # 1-7일 전
+        day2 = day.strftime('%Y.%m.%d')
+        posesData = data.filter(timeymd=day2) # 해당 날짜 데이터 전체
+        
+        # 해당 날짜 데이터 전체 개수
+        posesDataCnt = posesData.count()
+        # 바른 자세 데이터 수
+        correctposecnt = posesData.filter(posturetype=0).count()
+        # 나쁜 자세 데이터 수
+        badposecnt = posesData.exclude(posturetype=0).count()
+        
+        if posesDataCnt > 0:
+            correct_posture_ratio = round((correctposecnt / posesDataCnt), 2)
+            incorrect_posture_ratio = round((badposecnt / posesDataCnt), 2)
+        else:
+            # todayposecnt가 0인 경우, 모든 비율을 0으로 설정
+            correct_posture_ratio = 0
+            incorrect_posture_ratio = 0
+        
+        # 리스트에 데이터 추가
+        correctWeek.insert(0, correct_posture_ratio)
+        badWeek.insert(0, incorrect_posture_ratio)
+        weekDate.insert(0,day.strftime('%m/%d'))
+        
+    return correctWeek, badWeek, weekDate

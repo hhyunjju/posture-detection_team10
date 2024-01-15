@@ -1,18 +1,24 @@
 <!-- profile.html -->
-<h1>내 정보</h1>
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}프로필{% endblock title %}
+{% block content %}
+<h1>프로필</h1>
 <ul>
-  <li><p>Name: {{ profile.user.username }}</p></li>
+  <li><p>Username: {{ profile.user.username }}</p></li>
   <li><p>Phone Number: {{ profile.phone_number }}</p></li>
   {% comment %} <li><p>Address: {{ profile.address }}</p></li> ; address삭제 {% endcomment %}
   <li><p>Email: {{ profile.email }}</p></li>
   <li><p>Nickname: {{ profile.nickname }}</p></li>
 </ul>
-<a href="{% url 'accounts:password_change' %}">[비밀번호 변경하기]</a>
+<a href="{% url 'accounts:password_change' %}">[비밀번호 변경]</a>
+<a href="{% url 'accounts:profile_update' %}">[내 정보 수정]</a>
 {% if messages %}
   <ul>
     {% for message in messages %}
-      <li>{{message}}</li>
+      <li style="display:none;">{{message}}</li>
     {% endfor %}
   </ul>
 {% endif %}
-{% comment %}  {% endcomment %}
+{% endblock content %}

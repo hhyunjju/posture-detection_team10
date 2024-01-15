@@ -8,9 +8,46 @@
 		<link rel="stylesheet" type="text/css" href="{% static 'assets/css/service.css' %}">
 		<link rel="icon" href="{%static 'assets/images/logo_page.png' %}" type="image/x-icon" />
 		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+		<style>
+			.meta {
+				position: relative; /* position context를 설정합니다. */
+				width: 100%; /* 필요한 경우 부모 요소의 너비를 지정합니다. */
+				height: 100%; /* 필요한 경우 부모 요소의 높이를 지정합니다. */
+			  }
+			
+			  .meta img {
+				width: 100%; /* 이미지가 부모 요소의 너비에 맞춰지도록 합니다. */
+				height: 100%; /* 이미지가 부모 요소의 높이에 맞춰지도록 합니다. */
+				object-fit: cover; /* 이미지가 비율을 유지하면서 부모 요소를 가득 채우도록 합니다. */
+			  }
+			  video{
+				transform: rotateY(180deg);
+				-webkit-transform:rotateY(180deg); /* Safari and Chrome */
+				-moz-transform:rotateY(180deg); /* Firefox */
+			}
+			video{
+				transform: rotateY(180deg);
+				-webkit-transform:rotateY(180deg); /* Safari and Chrome */
+				-moz-transform:rotateY(180deg); /* Firefox */
+			}
+			.graph-container {
+				flex: 1 1 45%; 	
+				max-width: 45%;  
+				padding: 20px;
+				box-sizing: border-box;
+			}
+			canvas {
+				width: 100% !important; /* 캔버스 너비를 부모 요소에 맞춥니다. */
+				height: auto !important; /* 높이는 자동 조절 */
+			}
+			#statistics{
+				display: flex; 
+				flex-wrap: wrap; 
+				justify-content: space-around;
+			}
+		</style> <!--------------------------------css끝------------------------------------->
 	</head>
 	<body class="single is-preload">
-		
 		<!-- Wrapper -->
 			<div id="wrapper">
 
@@ -27,9 +64,8 @@
 									<li><a href="{% url 'accounts:logout' %}?next={{request.path}}">로그 아웃</a></li>
 								{% endif %}
 								<li class="menu-item-board"><a href="{% url 'brd:notice_board' %}">게시판</a></li>
-								<li class="menu-item-contact"><a href="{% url 'brd:faq' %}">FAQ</a></li>
-								<li class="menu-item-company"><a href="{% url 'home:intro' %}">회사소개</a></li>
 								<li><a href="{% url 'service:service' %}">서비스</a></li>
+								<li class="menu-item-company"><a href="{% url 'home:intro' %}">회사소개</a></li>
 							</ul>
 						</nav>
 						<nav class="main">
@@ -66,22 +102,18 @@
 									});
 								
 									function redirectToPageBasedOnQuery(query) {
-										if (query.includes('통계 결과')) {
-											window.location.href = '{% url 'service:statistics' %}';
-										} else if (query.includes('모니터링')) {
-											window.location.href = '{% url 'service:service' %}';
-										} else if (query.includes('FAQ')) {
-											window.location.href = '{% url 'brd:faq' %}';
+										if (query.includes('통계 결과', '통계', '기록')) {
+											window.location.href = '{% url "service:statistics" %}';
+										} else if (query.includes('모니터링', '서비스', '카메라')) {
+											window.location.href = '{% url "service:service" %}';
 										} else if (query.includes('게시판')) {
-											window.location.href = '{% url 'brd:notice_board' %}';
+											window.location.href = '{% url "brd:notice_board" %}';
 										} else if (query.includes('회사소개')) {
-											window.location.href = '{% url 'home:intro' %}';
+											window.location.href = '{% url "home:intro" %}';
 										} else if (query.includes('회원가입')) {
-											window.location.href = '{% url 'accounts:signup' %}';
-										} else if (query.includes('모델성능')) {
-											window.location.href = '{% url 'service:model' %}';
+											window.location.href = '{% url "accounts:signup" %}';
 										} else if (query.includes('게임')) {
-											window.location.href = '{% url 'service:game' %}';
+											window.location.href = '{% url "service:game" %}';
 										} else {
 											// 다른 검색어에 대한 처리 (옵션)
 											// 예: window.location.href = '/search?query=' + encodeURIComponent(query);
@@ -111,24 +143,11 @@
 											<p>결과를 다른 사람들과 비교해 보고 질문해 보세요</p>
 										</a>
 									</li>
-									<li>
-										<a href="{% url 'brd:faq' %}">
-											<h3>FAQ</h3>
-											<p>저희의 ~ 알아보세요</p>
-										</a>
-									</li>
-								</ul>
-							</section>
-
-						<!-- Actions -->
-							<section>
-								<ul class="actions stacked">
-									<li><a href="#" class="button large fit">로그인</a></li>
 								</ul>
 							</section>
 					</section>
 
-				<!-- Main -->
+<!---------------- Main ----------------------------------------------------------------------------------------------->
 					<div id="main">
 
 						<!-- Post -->
@@ -139,19 +158,6 @@
 										<p>그래프와 각종 통계자료로 확인해보세요</p>
 									</div>
 									<div class="meta">
-										<style>
-											.meta {
-											  position: relative; /* position context를 설정합니다. */
-											  width: 100%; /* 필요한 경우 부모 요소의 너비를 지정합니다. */
-											  height: 100%; /* 필요한 경우 부모 요소의 높이를 지정합니다. */
-											}
-										  
-											.meta img {
-											  width: 100%; /* 이미지가 부모 요소의 너비에 맞춰지도록 합니다. */
-											  height: 100%; /* 이미지가 부모 요소의 높이에 맞춰지도록 합니다. */
-											  object-fit: cover; /* 이미지가 비율을 유지하면서 부모 요소를 가득 채우도록 합니다. */
-											}
-										  </style>
 										<time class="published" id="current-time"></time>
 										<a href="https://data.kma.go.kr/cmmn/main.do" class="author">
 										  <span class="name"></span>
@@ -175,26 +181,21 @@
 										};
 									</script>
 								</header>
-								<br>
-								<style>
-									video{
-										transform: rotateY(180deg);
-										-webkit-transform:rotateY(180deg); /* Safari and Chrome */
-										-moz-transform:rotateY(180deg); /* Firefox */
-									}
-								</style>
-								</header>
-								<!-- 통계 데이터 섹션 -->
-								<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+			<!------------------------------ 통계 데이터 섹션 ------------------------------------------>
+								<h3><time class="published" id="current-time"></time></h3>
+								<h3>{{user.profile.nickname}}님의 일일 자세 분석</h3>
 								<section id="statistics">
-									<h3>일일 자세 분석</h3>
+									<div class="statistic">
+										<h4>총 이용 시간</h4>
+										<p id="totalRatio">{{today_usage_t}} 시간</p>
+									</div>
 									<div class="statistic">
 										<h4>정확한 자세 지속 시간 비율</h4>
-										<p>{{ correct_posture_ratio }} 시간</p>
+										<p>{{ correct_posture_ratio }} %</p>
 									</div>
 									<div class="statistic">
 										<h4>부정확한 자세 지속 시간 비율</h4>
-										<p>{{ incorrect_posture_ratio }} 시간</p>
+										<p>{{ incorrect_posture_ratio }} %</p>
 									</div>
 									<section id="statistics" style="display: flex; flex-wrap: wrap; justify-content: space-around;">
 										<!-- 막대 그래프 섹션 -->
@@ -205,7 +206,7 @@
 										
 										<!-- 꺾은선 그래프 섹션 -->
 										<div class="graph-container">
-											<h3>일주일 자세 변화 - 꺾은선 그래프</h3>
+											<h3>지난 7일 자세 비율 - 꺾은선 그래프</h3>
 											<canvas id="lineChart"></canvas>
 										</div>
 										
@@ -222,6 +223,130 @@
 											<canvas id="radarChart"></canvas>
 										</div>
 									</section>
+
+
+									<footer>
+										<ul class="stats">
+											
+										</ul>
+										<ul class="actions">
+											<!-- 게임화된 통계 페이지로 가는 링크를 추가합니다 -->
+											<li>
+												<a href="{% url 'service:game' %}" class="button large">자세 교정 게임하기</a>
+												<button onclick="downloadAllCharts()" class="button large">통계 결과 다운로드</button>
+											</li>
+										</ul>
+									</footer>
+
+
+
+							</article>
+
+					</div>
+
+		<!--------------------------------------Footer -------------------------------------------------------------->
+					<section id="footer">
+						<div class="footer-logo">
+							<img src="{%static 'assets/images/logo_page.png' %}" alt="바른자세 로고" />
+						</div>
+						<ul class="icons">
+							<li><a href="https://twitter.com" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+							<li><a href="https://facebook.com" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+							<li><a href="https://instagram.com" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+							<li><a href="mailto:your@email.com" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
+						</ul>
+						<div class="policy-links">
+							| <a href="javascript:void(0);" onclick="openPrivacyPolicy();">개인정보처리방침</a>
+							| <a href="javascript:void(0);" onclick="openTermsOfService();">이용약관</a>
+							| <a href="javascript:void(0);" onclick="openFaq();">자주묻는질문</a>
+							| <a href="javascript:void(0);" onclick="openDataPolicy();">데이터베이스이용약관</a> |
+						</div>					
+						<p class="copyright">
+							<a href="https://aivle.edu.kt.co.kr/home/main/goMenuPage?mcd=MC00000034">KT Aivle School</a> Designed by Aivle 4기 10조.
+						</p>
+					</section>
+
+			</div>
+
+		<!-- Scripts -->
+			<style>
+				/* 전체 페이지의 폰트와 배경 설정 */
+
+				
+				/* 통계 섹션 스타일링 */
+				#statistics {
+
+					gap: 20px;
+					padding: 20px;
+					box-sizing: border-box;
+				}
+				
+				/* 그래프 컨테이너 스타일링 */
+				.graph-container {
+					background: #fff;
+					border: 1px solid #e7e7e7;
+					border-radius: 8px;
+					padding: 20px;
+					box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+				}
+				
+				/* 그래프 제목 스타일링 */
+				.graph-container h3 {
+					text-align: center;
+					font-size: 1.2em;
+					margin-bottom: 10px;
+					color: #333;
+				}
+				
+				/* 그래프 내부 캔버스 스타일링 */
+				.graph-container canvas {
+					max-width: 100%;
+					height: auto;
+				}
+				
+				/* 반응형 그래프 컨테이너를 위한 적절한 미디어 쿼리 */
+				@media (max-width: 600px) {
+					#statistics {
+					grid-template-columns: 1fr;
+					}
+				}
+				
+				/* 각종 통계 정보를 담은 컨테이너 스타일링 */
+				.statistic {
+					background: #fff;
+					padding: 15px;
+					border-radius: 8px;
+					text-align: center;
+					box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+				}
+				
+				/* 통계 정보 제목 스타일링 */
+				.statistic h4 {
+					font-size: 1em;
+					margin-bottom: 5px;
+					color: #333;
+				}
+				
+				/* 통계 정보 값을 표시하는 부분 스타일링 */
+				.statistic p {
+					font-size: 1.2em;
+					font-weight: bold;
+					color: #333;
+				}
+
+  
+			</style>
+			<script>
+				window.onload = function() {
+					// Django 템플릿에서 데이터 가져오기
+					var correctPostureRatio = parseFloat("{{ correct_posture_ratio }}");
+					var incorrectPostureRatio = parseFloat("{{ incorrect_posture_ratio }}");
+					var postureCounts = [parseFloat("{{ posture1_cnt }}"), parseFloat("{{ posture2_cnt }}"), parseFloat("{{ posture3_cnt }}"), parseFloat("{{ posture4_cnt }}")];
+
+					// 합산 계산
+					var totalRatio = correctPostureRatio + incorrectPostureRatio;
+					// 결과 출력 (예: 결과를 HTML의 특정 요소에 표시)
+					document.getElementById('totalRatio').innerText = totalRatio + "시간";
 									<style>
 										.graph-container {
 											flex: 1 1 45%; /* 화면의 45%를 차지합니다. */
@@ -242,6 +367,16 @@
 											var incorrectPostureRatio = parseFloat("{{ incorrect_posture_ratio }}");
 											var postureCounts = [parseFloat("{{ posture1_cnt }}"), parseFloat("{{ posture2_cnt }}"), parseFloat("{{ posture3_cnt }}"), parseFloat("{{ posture4_cnt }}")];
 
+
+											// 일주일 데이터 배열 변환
+											let correct = "{{correct_week}}".split(',');
+											let bad = "{{bad_week}}".split(',');
+											let weekdate = "{{week_date}}".split(',');
+
+											// 일주일 데이터 배열 원소 : 문자열 -> 숫자
+											correct = correct.map(Number);
+											bad = bad.map(Number);
+
 											// 막대 그래프 생성
 											var barCtx = document.getElementById('barChart').getContext('2d');
 											var barChart = new Chart(barCtx, {
@@ -251,8 +386,8 @@
 													datasets: [{
 														label: '자세 비율',
 														data: [correctPostureRatio, incorrectPostureRatio],
-														backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)'],
-														borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)'],
+														backgroundColor: ['rgba(54, 162, 235, 0.2)', 'rgba(255, 99, 132, 0.2)'],
+														borderColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 99, 132, 1)'],
 														borderWidth: 1
 													}]
 												},
@@ -268,20 +403,20 @@
 											});
 
 
-											// 원형 그래프 생성
-											var pieCtx = document.getElementById('pieChart').getContext('2d');
-											var pieChart = new Chart(pieCtx, {
-												type: 'pie',
-												data: {
-													labels: ['거북목 자세', '턱괴는 자세', '엎드리는 자세', '누워 기대는 자세'],
-													datasets: [{
-														data: postureCounts,
-														backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)', 'rgba(75, 192, 192, 0.2)'],
-														borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)', 'rgba(75, 192, 192, 1)'],
-														borderWidth: 1
-													}]
-												}
-											});
+					// 원형 그래프 생성
+					var pieCtx = document.getElementById('pieChart').getContext('2d');
+					var pieChart = new Chart(pieCtx, {
+						type: 'pie',
+						data: {
+							labels: ['거북목 자세', '턱괴는 자세', '엎드리는 자세', '누워 기대는 자세'],
+							datasets: [{
+								data: postureCounts,
+								backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)', 'rgba(75, 192, 192, 0.2)'],
+								borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)', 'rgba(75, 192, 192, 1)'],
+								borderWidth: 1
+							}]
+						}
+					});
 
 
 											// 꺾은선 그래프 생성
@@ -289,11 +424,19 @@
 											var lineChart = new Chart(lineCtx, {
 												type: 'line',
 												data: {
-													labels: ['월', '화', '수', '목', '금', '토', '일'],
+													// labels: ['월', '화', '수', '목', '금', '토', '일'],
+													labels: weekdate,
 													datasets: [{
-														label: '일주일간의 자세 변화',
-														data: [65, 59, 80, 81, 56, 55, 40], // 예시 데이터, 실제 데이터로 대체 필요
-														borderColor: 'rgb(75, 192, 192)',
+														label: '바른 자세 비율',
+														// data: [65, 59, 80, 81, 56, 55, 40], // 예시 데이터, 실제 데이터로 대체 필요
+														data:correct,
+														borderColor: 'rgba(54, 162, 235, 1)',
+														tension: 0.1
+													},{
+														label: '바르지 않은 자세 비율',
+														// data: [65, 59, 80, 81, 56, 55, 40], // 예시 데이터, 실제 데이터로 대체 필요
+														data:bad,
+														borderColor: 'rgba(255, 99, 132, 1)',
 														tension: 0.1
 													}]
 												},
@@ -308,115 +451,103 @@
 												}
 											});
 
-											// 레이더 차트 생성
-											var radarCtx = document.getElementById('radarChart').getContext('2d');
-											var radarChart = new Chart(radarCtx, {
-												type: 'radar',
-												data: {
-													labels: ['거북목 자세', '턱괴는 자세', '엎드리는 자세', '누워 기대는 자세'],
-													datasets: [{
-														label: '자세 유형별 비교',
-														data: postureCounts, // 예시 데이터, 실제 데이터로 대체 필요
-														backgroundColor: 'rgba(255, 99, 132, 0.2)',
-														borderColor: 'rgba(255, 99, 132, 1)',
-														borderWidth: 1
-													}]
-												},
-												options: {
-													scales: {
-														r: {
-															angleLines: {
-																display: false
-															},
-															suggestedMin: 0,
-															suggestedMax: 100
-														}
-													}
-												}
-											});
-
-										};
-									</script>
-
-								<footer>
-									<ul class="stats">
-										
-									</ul>
-									<ul class="actions">
-										<!-- 게임화된 통계 페이지로 가는 링크를 추가합니다 -->
-										<li><a href="{% url 'service:game' %}" class="button large">자세 교정 게임하기</a></li>
-									</ul>
-								</footer>
-							</article>
-
-					</div>
-
-				<!-- Footer -->
-					<section id="footer">
-						<div class="footer-logo">
-							<img src="{%static 'assets/images/logo_page.png' %}" alt="바른자세 로고" />
-						</div>
-						<ul class="icons">
-							<li><a href="https://twitter.com" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-							<li><a href="https://facebook.com" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
-							<li><a href="https://instagram.com" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
-							<li><a href="mailto:your@email.com" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
-						</ul>
-						<div class="policy-links">
-							| <a href="javascript:void(0);" onclick="openPrivacyPolicy();">개인정보처리방침</a>
-							| <a href="javascript:void(0);" onclick="openTermsOfService();">이용약관</a>
-							| <a href="javascript:void(0);" onclick="openFaq();">자주묻는질문</a>
-							| <a href="javascript:void(0);" onclick="openDataPolicy();">데이터베이스이용약관</a> |
-						</div>
-						<script>
-							function openPrivacyPolicy() {
-								var privacyWindow = window.open('', 'Privacy Policy', 'width=600,height=400');
-								privacyWindow.document.write('<html><head><title>개인정보처리방침</title></head><body>');
-								privacyWindow.document.write('<h1>개인정보처리방침</h1>');
-								privacyWindow.document.write('<p>여기에 개인정보처리방침 내용을 작성합니다.</p>');
-								privacyWindow.document.write('</body></html>');
-								privacyWindow.document.close();
+					// 레이더 차트 생성
+					var radarCtx = document.getElementById('radarChart').getContext('2d');
+					var radarChart = new Chart(radarCtx, {
+						type: 'radar',
+						data: {
+							labels: ['거북목 자세', '턱괴는 자세', '엎드리는 자세', '누워 기대는 자세'],
+							datasets: [{
+								label: '자세 유형별 비교',
+								data: postureCounts, // 예시 데이터, 실제 데이터로 대체 필요
+								backgroundColor: 'rgba(255, 99, 132, 0.2)',
+								borderColor: 'rgba(255, 99, 132, 1)',
+								borderWidth: 1
+							}]
+						},
+						options: {
+							scales: {
+								r: {
+									angleLines: {
+										display: false
+									},
+									suggestedMin: 0,
+									suggestedMax: 100
+								}
 							}
-							
-							function openTermsOfService() {
-								var termsWindow = window.open('', 'Terms of Service', 'width=600,height=400');
-								termsWindow.document.write('<html><head><title>이용약관</title></head><body>');
-								termsWindow.document.write('<h1>이용약관</h1>');
-								termsWindow.document.write('<p>여기에 이용약관 내용을 작성합니다.</p>');
-								termsWindow.document.write('</body></html>');
-								termsWindow.document.close();
-							}
-						
-							function openFaq() {
-								var faqWindow = window.open('', 'FAQ', 'width=600,height=400');
-								faqWindow.document.write('<html><head><title>자주묻는질문</title></head><body>');
-								faqWindow.document.write('<h1>자주묻는질문</h1>');
-								faqWindow.document.write('<p>여기에 자주묻는질문 내용을 작성합니다.</p>');
-								faqWindow.document.write('</body></html>');
-								faqWindow.document.close();
-							}
-							
-							function openDataPolicy() {
-								var dataPolicyWindow = window.open('', 'Data Policy', 'width=600,height=400');
-								dataPolicyWindow.document.write('<html><head><title>데이터베이스이용약관</title></head><body>');
-								dataPolicyWindow.document.write('<h1>데이터베이스이용약관</h1>');
-								dataPolicyWindow.document.write('<p>여기에 데이터베이스이용약관 내용을 작성합니다.</p>');
-								dataPolicyWindow.document.write('</body></html>');
-								dataPolicyWindow.document.close();
-							}
-						</script>						
-						<p class="copyright">
-							<a href="https://aivle.edu.kt.co.kr/home/main/goMenuPage?mcd=MC00000034">KT Aivle School</a> Designed by Aivle 4기 10조.
-						</p>
-					</section>
+						}
+					});
 
-			</div>
+				};
 
-		<!-- Scripts -->
+				function openPrivacyPolicy() {
+					window.open('{% url 'home:privacy_policy' %}', 'Privacy Policy', 'width=600,height=400');
+				}
+				
+				function openTermsOfService() {
+					window.open('{% url 'home:terms_of_service' %}', 'Terms of Service', 'width=600,height=400');
+				}
+				
+				function openDataPolicy() {
+					window.open('{% url 'home:data_policy' %}', 'Data Policy', 'width=600,height=400');
+				}
+			</script>	
 			<script src="{% static 'assets/js/jquery.min.js' %}"></script>
 			<script src="{% static 'assets/js/browser.min.js' %}"></script>
 			<script src="{% static 'assets/js/breakpoints.min.js' %}"></script>
 			<script src="{% static 'assets/js/util.js' %}"></script>
 			<script src="{% static 'assets/js/main.js' %}"></script>
+			<script>
+				function downloadAllCharts() {
+					// 각 차트의 이미지 URL을 가져오는 함수
+					function getImageUrl(chartId) {
+						var chart = Chart.getChart(chartId);
+						return chart ? chart.toBase64Image() : '';
+					}
+				
+					// 모든 차트의 이미지 URL을 배열로 생성
+					var chartImages = [
+						getImageUrl('barChart'),
+						getImageUrl('lineChart'),
+						getImageUrl('pieChart'),
+						getImageUrl('radarChart')
+					];
+				
+					// 캔버스 생성 및 크기 설정
+					var canvas = document.createElement('canvas');
+					var ctx = canvas.getContext('2d');
+					var chartWidth = 400; // 각 차트의 너비
+					var chartHeight = 400; // 각 차트의 높이
+					canvas.width = chartWidth * 2; // 2개 차트 너비
+					canvas.height = chartHeight * 2; // 2개 차트 높이
+				
+					// 이미지를 캔버스에 그리는 함수
+					function drawImageOnCanvas(imageUrl, index) {
+						return new Promise((resolve, reject) => {
+							var img = new Image();
+							img.onload = function() {
+								var x = (index % 2) * chartWidth; // x 위치 (0 또는 chartWidth)
+								var y = Math.floor(index / 2) * chartHeight; // y 위치 (0 또는 chartHeight)
+								ctx.drawImage(img, x, y, chartWidth, chartHeight); // 이미지 그리기
+								resolve();
+							};
+							img.onerror = reject;
+							img.src = imageUrl;
+						});
+					}
+				
+					// 모든 차트 이미지를 순서대로 캔버스에 그린 후 이미지로 다운로드
+					Promise.all(chartImages.map(drawImageOnCanvas)).then(() => {
+						var finalImage = canvas.toDataURL("image/png");
+						var link = document.createElement('a');
+						link.href = finalImage;
+						link.download = 'allCharts.png';
+						document.body.appendChild(link);
+						link.click();
+						document.body.removeChild(link);
+					});
+				}
+				
+			</script>
 	</body>
 </html>

@@ -24,11 +24,10 @@
 								{% else %}
 									<li><a href="{% url 'accounts:profile' %}">{{user}}님!</a></li>
 									<li><a href="{% url 'accounts:logout' %}?next={{request.path}}">로그 아웃</a></li>
+									<li class="menu-item-board"><a href="{% url 'brd:notice_board' %}">게시판</a></li>
+									<li><a href="{% url 'service:service' %}">서비스</a></li>
 								{% endif %}
-								<li class="menu-item-board"><a href="{% url 'brd:notice_board' %}">게시판</a></li>
-								<li class="menu-item-contact"><a href="{% url 'brd:faq' %}">FAQ</a></li>
 								<li class="menu-item-company"><a href="{% url 'home:intro' %}">회사소개</a></li>
-								<li><a href="{% url 'service:service' %}">서비스</a></li>
 							</ul>
 						</nav>
 						<nav class="main">
@@ -65,22 +64,18 @@
 									});
 								
 									function redirectToPageBasedOnQuery(query) {
-										if (query.includes('통계 결과')) {
-											window.location.href = '{% url 'service:statistics' %}';
-										} else if (query.includes('모니터링')) {
-											window.location.href = '{% url 'service:service' %}';
-										} else if (query.includes('FAQ')) {
-											window.location.href = '{% url 'brd:faq' %}';
+										if (query.includes('통계 결과', '통계', '기록')) {
+											window.location.href = '{% url "service:statistics" %}';
+										} else if (query.includes('모니터링', '서비스', '카메라')) {
+											window.location.href = '{% url "service:service" %}';
 										} else if (query.includes('게시판')) {
-											window.location.href = '{% url 'brd:notice_board' %}';
+											window.location.href = '{% url "brd:notice_board" %}';
 										} else if (query.includes('회사소개')) {
-											window.location.href = '{% url 'home:intro' %}';
+											window.location.href = '{% url "home:intro" %}';
 										} else if (query.includes('회원가입')) {
-											window.location.href = '{% url 'accounts:signup' %}';
-										} else if (query.includes('모델성능')) {
-											window.location.href = '{% url 'service:model' %}';
+											window.location.href = '{% url "accounts:signup" %}';
 										} else if (query.includes('게임')) {
-											window.location.href = '{% url 'service:game' %}';
+											window.location.href = '{% url "service:game" %}';
 										} else {
 											// 다른 검색어에 대한 처리 (옵션)
 											// 예: window.location.href = '/search?query=' + encodeURIComponent(query);
@@ -92,6 +87,9 @@
 						<!-- Links -->
 							<section>
 								<ul class="links">
+									{% if not user.is_authenticated %}		
+									<li><a href="{% url 'accounts:login' %}?next={{request.path}}" class="button large">로그인</a></li>
+									{% else %}							
 									<li>
 										<a href="{% url 'service:service' %}">
 											<h3>모니터링</h3>
@@ -110,19 +108,7 @@
 											<p>결과를 다른 사람들과 비교해 보고 질문해 보세요</p>
 										</a>
 									</li>
-									<li>
-										<a href="{% url 'brd:faq' %}">
-											<h3>FAQ</h3>
-											<p>저희의 ~ 알아보세요</p>
-										</a>
-									</li>
-								</ul>
-							</section>
-
-						<!-- Actions -->
-							<section>
-								<ul class="actions stacked">
-									<li><a href="{% url 'accounts:login' %}" class="button large fit">로그인</a></li>
+									{% endif %}
 								</ul>
 							</section>
 					</section>
@@ -164,39 +150,15 @@
 						</div>
 						<script>
 							function openPrivacyPolicy() {
-								var privacyWindow = window.open('', 'Privacy Policy', 'width=600,height=400');
-								privacyWindow.document.write('<html><head><title>개인정보처리방침</title></head><body>');
-								privacyWindow.document.write('<h1>개인정보처리방침</h1>');
-								privacyWindow.document.write('<p>여기에 개인정보처리방침 내용을 작성합니다.</p>');
-								privacyWindow.document.write('</body></html>');
-								privacyWindow.document.close();
+								window.open('{% url 'home:privacy_policy' %}', 'Privacy Policy', 'width=600,height=400');
 							}
 							
 							function openTermsOfService() {
-								var termsWindow = window.open('', 'Terms of Service', 'width=600,height=400');
-								termsWindow.document.write('<html><head><title>이용약관</title></head><body>');
-								termsWindow.document.write('<h1>이용약관</h1>');
-								termsWindow.document.write('<p>여기에 이용약관 내용을 작성합니다.</p>');
-								termsWindow.document.write('</body></html>');
-								termsWindow.document.close();
-							}
-						
-							function openFaq() {
-								var faqWindow = window.open('', 'FAQ', 'width=600,height=400');
-								faqWindow.document.write('<html><head><title>자주묻는질문</title></head><body>');
-								faqWindow.document.write('<h1>자주묻는질문</h1>');
-								faqWindow.document.write('<p>여기에 자주묻는질문 내용을 작성합니다.</p>');
-								faqWindow.document.write('</body></html>');
-								faqWindow.document.close();
+								window.open('{% url 'home:terms_of_service' %}', 'Terms of Service', 'width=600,height=400');
 							}
 							
 							function openDataPolicy() {
-								var dataPolicyWindow = window.open('', 'Data Policy', 'width=600,height=400');
-								dataPolicyWindow.document.write('<html><head><title>데이터베이스이용약관</title></head><body>');
-								dataPolicyWindow.document.write('<h1>데이터베이스이용약관</h1>');
-								dataPolicyWindow.document.write('<p>여기에 데이터베이스이용약관 내용을 작성합니다.</p>');
-								dataPolicyWindow.document.write('</body></html>');
-								dataPolicyWindow.document.close();
+								window.open('{% url 'home:data_policy' %}', 'Data Policy', 'width=600,height=400');
 							}
 						</script>						
 						<p class="copyright">

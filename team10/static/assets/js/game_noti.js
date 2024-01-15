@@ -17,12 +17,21 @@ function makeGameNoti() {
 
         // 알림 클릭 이벤트 처리
         globalstretchingNotification.addEventListener("click", () => {
-            window.open("http://localhost:8000/service/game/");
+            window.location.href = "http://localhost:8000/service/game/";
             globalstretchingNotification.close();
             globalstretchingNotification = null; // 전역 알림 객체 초기화
         });
     }
 }
 
+// 알림 닫기 함수
+function closeStretchingNotification() {
+    if (globalstretchingNotification) {
+        globalstretchingNotification.close();
+        globalstretchingNotification = null; // 전역 알림 객체 초기화
+    }
+}
+
 // 전역 스코프에서 함수 사용 가능하도록 설정
 window.makeGameNoti = makeGameNoti;
+window.closeStretchingNotification = closeStretchingNotification;

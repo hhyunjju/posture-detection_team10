@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "accounts",
-    "main",
     "brd",
     "home",
     "service",
@@ -180,7 +179,7 @@ SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'SCOPE': [
             'profile', 
-            'email', #저는 email 주소 정보도 받아오고 싶어서 추가해줬습니다
+            'email', # email 주소 정보도 받아오고 싶어서 추가해줬습니다
         ],
         'AUTH_PARAMS': {
             'access_type': 'online'
